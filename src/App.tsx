@@ -44,43 +44,60 @@ const Container = styled.div`
   }
 `
 
-const cutData = (data: string) => {
+const copyName = (data: string) => {}
+
+const cutData = (data: string[]) => {
   const sections = []
+  const names = []
   let sliceStart = 0
-  for (let i = 0; i < data.length; i++) {
-    console.log('loop')
+  for (let index = 2; index < data.length; index++) {
+    const letter = data[index]
 
-    let count = 0
-    if (data[i] === '{') {
-      sliceStart = i
-      console.log('{', data[i])
-      while (count > 0 && i < data.length) {
-        console.log('loopyloop')
-        if (data[i] === '{') {
-          count++
-        } else if (data[i] === '}') {
-          count--
-        }
-        console.log('yyououhi', { i, sliceStart })
-        i++
+    // copy name
+    let name = ''
+    if (letter === `:`) {
+      let i = index
+      while (data[i] !== `,` && i > 0) {
+        name += data[i]
+        i--
       }
-
-      sections.push(data.slice(sliceStart, i))
+      names.push(name.split('').reverse().join(''))
+      name = ''
     }
-    i++
+
+    // copy object
+    if (letter === '{') {
+      sliceStart = index
+      for (let i = index; i < data.length; i++) {
+        if (data[i] === '}') {
+          const nextLetter = data[i + 1]
+          const amount = nextLetter === ',' ? 2 : 1
+          sections.push(
+            data.splice(sliceStart, i - sliceStart + amount).join('')
+          )
+          index = sliceStart - amount
+          break
+        }
+      }
+    }
   }
-  console.log(sections)
+  console.log({ names, sections })
+  return data.join('')
 }
 
 function App() {
-  const data = cutData(JSON.stringify(fakeData))
+  const stringData = JSON.stringify(fakeData)
+
+  const data = cutData([...stringData])
 
   return (
     <Container>
       <pre>
         <output
           dangerouslySetInnerHTML={{
-            __html: prettyPrintJson.toHtml(data, { indent: 2 }),
+            __html: prettyPrintJson.toHtml(JSON.parse(data), {
+              indent: 2,
+            }),
           }}
         />
       </pre>
