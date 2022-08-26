@@ -53,6 +53,9 @@ const Option = styled.div`
   justify-content: space-between;
   border-bottom: 1px dashed ${({ theme }) => theme.faintOutline};
   padding: 5px 0;
+  * {
+    font-size: 20px;
+  }
   label {
     font-weight: 700;
     color: ${({ theme }) => theme.text};
@@ -71,6 +74,7 @@ const Option = styled.div`
     width: 50%;
     max-width: 400px;
     min-width: 135px;
+    background: none;
   }
   input[type='range'] {
     cursor: pointer;

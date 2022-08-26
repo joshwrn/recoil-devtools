@@ -6,9 +6,11 @@ import { atom, useRecoilState, useRecoilValue } from 'recoil'
 import styled from 'styled-components'
 
 import {
+  devToolsSearchState,
   recoilDevToolsOpenItemsState,
   recoilDevToolsSettingsState,
 } from './DebugInspector'
+import { searchIsFocusedState } from './DevtoolsHeader'
 
 const Atom = styled.pre<{ isOpen: boolean; itemSpacing: number }>`
   width: 100%;
@@ -41,6 +43,9 @@ const Atom = styled.pre<{ isOpen: boolean; itemSpacing: number }>`
       flex-shrink: 0;
       cursor: pointer;
       user-select: none;
+      span {
+        color: ${({ theme }) => theme.boolean};
+      }
     }
   }
 `
@@ -53,14 +58,8 @@ const parseParamToJson = (param: string) => {
   if (param[0] === `"`) {
     parsable = param.slice(1, -1)
   }
-  // else {
-  //   const [identifier, innerParam] = param.split(`/`)
-  //   parsable = JSON.parse(innerParam)
-  // }
   return prettyPrintJson.toHtml(parsable)
 }
-
-// const AUTO_SHOW_ITEMS = [`edge`, `area`, `panel`, `node`, `edgeComputed`]
 
 const DevToolItem: FC<{
   node: RecoilValue<unknown>
@@ -69,6 +68,8 @@ const DevToolItem: FC<{
 }> = ({ node, param, data }) => {
   const { itemSpacing } = useRecoilValue(recoilDevToolsSettingsState)
   const [openItems, setOpenItems] = useRecoilState(recoilDevToolsOpenItemsState)
+  const searchIsFocused = useRecoilValue(searchIsFocusedState)
+  const currentSearch = useRecoilValue(devToolsSearchState)
 
   const key = node.key.split(`__`)[0]
   if (openItems[node.key] === undefined) {
@@ -88,7 +89,16 @@ const DevToolItem: FC<{
     <Atom key={node.key} isOpen={isOpen} itemSpacing={itemSpacing}>
       <div className="devHeadingContainer">
         <h1 onClick={setIsOpen}>
-          {key}
+          {key.split('').map((letter) => {
+            if (
+              searchIsFocused &&
+              currentSearch.toLowerCase().includes(letter.toLowerCase())
+            ) {
+              return <span>{letter}</span>
+            } else {
+              return letter
+            }
+          })}
           {isOpen && `: `}
         </h1>
       </div>

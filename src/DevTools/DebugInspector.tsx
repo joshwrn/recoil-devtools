@@ -1,6 +1,6 @@
 import type { FC } from 'react'
 
-import type { AtomEffect } from 'recoil'
+import { AtomEffect, useRecoilState } from 'recoil'
 import { DefaultValue, atom, useRecoilSnapshot, useRecoilValue } from 'recoil'
 import styled, { ThemeProvider } from 'styled-components'
 import Fuse from 'fuse.js'
@@ -142,8 +142,6 @@ const Tools: FC = () => {
     isCaseSensitive: false,
   }
   const fuse = new Fuse(list, options)
-
-  console.log(fuse.search(userInput))
 
   return (
     <ThemeProvider theme={devThemes[theme] ?? devThemes[`Light`]}>

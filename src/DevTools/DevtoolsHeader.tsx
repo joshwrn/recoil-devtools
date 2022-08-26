@@ -37,6 +37,7 @@ const Header = styled.div<{ headerTransparency: number }>`
     width: calc(100% - 100px);
     padding: 5px 15px;
     border: 1px solid ${({ theme }) => theme.faintOutline};
+    background: none;
     border-radius: 7px;
     font-size: 20px;
     color: ${({ theme }) => theme.text};
@@ -67,11 +68,18 @@ const Header = styled.div<{ headerTransparency: number }>`
   }
 `
 
+export const searchIsFocusedState = atom({
+  key: `searchIsFocused`,
+  default: false,
+})
+
 const DevtoolsHeader: FC = () => {
   const setSettingsOpen = useSetRecoilState(recoilDevToolSettingsOpenState)
   const { transparency } = useRecoilValue(recoilDevToolsSettingsState)
   const setIsOpen = useSetRecoilState(devToolsOpenState)
   const [userInput, setUserInput] = useRecoilState(devToolsSearchState)
+  const [searchIsFocused, setSearchIsFocused] =
+    useRecoilState(searchIsFocusedState)
   const headerTransparency = transparency > 0.3 ? transparency + 0.3 : 0.4
   return (
     <Header headerTransparency={headerTransparency}>
@@ -79,6 +87,8 @@ const DevtoolsHeader: FC = () => {
         value={userInput}
         onChange={(e) => setUserInput(e.target.value)}
         placeholder="Search"
+        onFocus={() => setSearchIsFocused(true)}
+        onBlur={() => setSearchIsFocused(false)}
       />
       <div
         title="Settings"
