@@ -4,6 +4,7 @@ import fakeData from './fake.json'
 import styled from 'styled-components'
 
 import { prettyPrintJson } from 'pretty-print-json'
+import RecoilInspector from './DevTools/DebugInspector'
 
 const parseParamToJson = (param: string) => {
   let parsable = param
@@ -92,6 +93,7 @@ function App() {
 
   return (
     <Container>
+      <RecoilInspector />
       <pre>
         <output
           dangerouslySetInnerHTML={{

@@ -1,7 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import { RecoilRoot } from 'recoil'
 import { ThemeProvider } from 'styled-components'
 import App from './App'
+import './index.css'
 
 const theme = {
   key: `#d2a8ff`,
@@ -22,8 +24,10 @@ const theme = {
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <ThemeProvider theme={theme}>
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
+    <RecoilRoot>
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
+    </RecoilRoot>
   </ThemeProvider>
 )
