@@ -82,14 +82,14 @@ const cutData = (data: string[]) => {
       }
     }
   }
-  console.log({ names, sections })
-  return data.join('')
+  console.log({ names, sections, data: data.join('') })
+  return { data: data.join(''), names, sections }
 }
 
 function App() {
   const stringData = JSON.stringify(fakeData)
 
-  const data = cutData([...stringData])
+  const { data, names, sections } = cutData([...stringData])
 
   return (
     <Container>
@@ -102,6 +102,28 @@ function App() {
             }),
           }}
         />
+        {sections.map((section, index) => {
+          const currentSection =
+            section.charAt(section.length - 1) === ','
+              ? section.slice(0, -1)
+              : section
+          return (
+            <div key={index}>
+              <pre>
+                <output
+                  dangerouslySetInnerHTML={{
+                    __html: prettyPrintJson.toHtml(
+                      JSON.parse('[' + currentSection + ']'),
+                      {
+                        indent: 2,
+                      }
+                    ),
+                  }}
+                />
+              </pre>
+            </div>
+          )
+        })}
       </pre>
     </Container>
   )

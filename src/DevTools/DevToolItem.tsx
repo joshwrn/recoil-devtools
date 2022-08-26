@@ -44,6 +44,8 @@ const Atom = styled.pre<{ isOpen: boolean; itemSpacing: number }>`
       cursor: pointer;
       user-select: none;
       span {
+        user-select: none;
+        pointer-events: none;
         color: ${({ theme }) => theme.boolean};
       }
     }

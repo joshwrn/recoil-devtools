@@ -26,6 +26,8 @@
       "adipisicing",
       "adipisicing"
     ],
+    "greeting": "Hello, Pena Velazquez! You have 4 unread messages.",
+    "favoriteFruit": "banana",
     "friends": [
       {
         "id": 0,
@@ -39,8 +41,6 @@
         "id": 2,
         "name": "Morton Sykes"
       }
-    ],
-    "greeting": "Hello, Pena Velazquez! You have 4 unread messages.",
-    "favoriteFruit": "banana"
+    ]
   }
 ]
