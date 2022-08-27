@@ -14,12 +14,14 @@
     "pretty-print-json": "^1.2.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-portal": "^4.2.2",
     "recoil": "^0.7.5",
     "styled-components": "^5.3.5"
   },
   "devDependencies": {
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
+    "@types/react-portal": "^4.0.4",
     "@types/styled-components": "^5.1.26",
     "@vitejs/plugin-react": "^2.0.1",
     "typescript": "^4.6.4",

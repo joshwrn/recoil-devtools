@@ -18,8 +18,6 @@ const Atom = styled.pre<{ isOpen: boolean; itemSpacing: number }>`
   font-size: 17px;
   display: inline-block;
   justify-self: flex-end;
-  color: ${({ theme, isOpen }) =>
-    isOpen ? theme.primaryText : theme.faintText};
   .recoilToolDetail {
     cursor: pointer;
     user-select: none;
@@ -42,14 +40,16 @@ const Atom = styled.pre<{ isOpen: boolean; itemSpacing: number }>`
       margin: 5px 0;
       flex-shrink: 0;
       cursor: pointer;
-      user-select: none;
-      span {
-        user-select: none;
-        pointer-events: none;
-        color: ${({ theme }) => theme.boolean};
-      }
     }
   }
+`
+
+const HeaderLetter = styled.span<{ highlight: boolean; isOpen: boolean }>`
+  user-select: none;
+  pointer-events: none;
+  color: ${({ theme, highlight, isOpen }) =>
+    highlight ? theme.boolean : isOpen ? theme.primaryText : theme.faintText};
+  transition: color 0.3s;
 `
 
 const parseParamToJson = (param: string) => {
@@ -87,19 +87,20 @@ const DevToolItem: FC<{
       [node.key]: !prev[node.key],
     }))
   }
+
   return (
     <Atom key={node.key} isOpen={isOpen} itemSpacing={itemSpacing}>
       <div className="devHeadingContainer">
         <h1 onClick={setIsOpen}>
           {key.split('').map((letter) => {
-            if (
+            const highlightLetter =
               searchIsFocused &&
               currentSearch.toLowerCase().includes(letter.toLowerCase())
-            ) {
-              return <span>{letter}</span>
-            } else {
-              return letter
-            }
+            return (
+              <HeaderLetter isOpen={isOpen} highlight={highlightLetter}>
+                {letter}
+              </HeaderLetter>
+            )
           })}
           {isOpen && `: `}
         </h1>

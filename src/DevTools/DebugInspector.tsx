@@ -4,6 +4,8 @@ import { AtomEffect, useRecoilState } from 'recoil'
 import { DefaultValue, atom, useRecoilSnapshot, useRecoilValue } from 'recoil'
 import styled, { ThemeProvider } from 'styled-components'
 import Fuse from 'fuse.js'
+import { createPortal } from 'react-dom'
+import { Portal } from 'react-portal'
 
 import { devThemes, JsonColors } from './DevThemes'
 import DevToolItem from './DevToolItem'
@@ -185,7 +187,11 @@ const RecoilInspector: FC = () => {
   return (
     <>
       <DevToolsIcon />
-      {isOpen && <Tools />}
+      {isOpen && (
+        <Portal>
+          <Tools />
+        </Portal>
+      )}
     </>
   )
 }
