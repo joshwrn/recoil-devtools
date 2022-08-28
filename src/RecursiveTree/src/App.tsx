@@ -25,17 +25,26 @@ function App() {
         const data = contents instanceof Set ? Array.from(contents) : contents
         console.log({ contents })
 
-        return (
-          <div style={{ padding: '5px' }}>
-            <RecursiveTree
-              key={node.key}
-              listMeta={[{ [item.key]: contents }]}
-              onSelectCallback={onSelect}
-            />
-          </div>
-        )
+        return <StateItem node={node} snapshot={snapshot} />
       })}
     </>
+  )
+}
+
+const StateItem: FC<{ snapshot: any; node: any }> = ({ snapshot, node }) => {
+  const { contents } = snapshot.getLoadable(node)
+  const [isOpen, setIsOpen] = useState(false)
+  return (
+    <div style={{ padding: '5px' }}>
+      <p onClick={() => setIsOpen(!isOpen)}>{node.key}</p>
+      {isOpen && (
+        <RecursiveTree
+          key={node.key}
+          listMeta={[contents]}
+          onSelectCallback={onSelect}
+        />
+      )}
+    </div>
   )
 }
 
