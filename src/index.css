@@ -27,12 +27,20 @@ a:hover {
 body {
   margin: 0;
   display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
 }
-
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  font-family: 'jetbrains mono', monospace;
+}
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
+}
+
+.json-key {
+  color: #d2a8ff;
 }

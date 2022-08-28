@@ -5,6 +5,9 @@ import styled from 'styled-components'
 
 import { prettyPrintJson } from 'pretty-print-json'
 import RecoilInspector from './DevTools/DebugInspector'
+import { useRecoilState } from 'recoil'
+import { fakeState } from './fakeState'
+import Converter from './Converter'
 
 const parseParamToJson = (param: string) => {
   let parsable = param
@@ -88,6 +91,7 @@ const cutData = (data: string[]) => {
 
 function App() {
   const stringData = JSON.stringify(fakeData)
+  const fake = useRecoilState(fakeState)
 
   const { data, names, sections } = cutData([...stringData])
 
@@ -102,6 +106,7 @@ function App() {
             }),
           }}
         />
+        <Converter list={sections} />
         {sections.map((section, index) => {
           const currentSection =
             section.charAt(section.length - 1) === ','

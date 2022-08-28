@@ -3,7 +3,10 @@ import ReactDOM from 'react-dom/client'
 import { RecoilRoot } from 'recoil'
 import { ThemeProvider } from 'styled-components'
 import App from './App'
+import Recursive from './RecursiveTree/src/App'
+import { createGlobalStyle } from 'styled-components'
 import './index.css'
+import RecoilInspector from './DevTools/DebugInspector'
 
 const theme = {
   key: `#d2a8ff`,
@@ -26,7 +29,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <ThemeProvider theme={theme}>
     <RecoilRoot>
       <React.StrictMode>
-        <App />
+        {/* <App /> */}
+        <Recursive />
+        <RecoilInspector />
       </React.StrictMode>
     </RecoilRoot>
   </ThemeProvider>

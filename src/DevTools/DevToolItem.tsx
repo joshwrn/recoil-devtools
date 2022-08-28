@@ -92,12 +92,16 @@ const DevToolItem: FC<{
     <Atom key={node.key} isOpen={isOpen} itemSpacing={itemSpacing}>
       <div className="devHeadingContainer">
         <h1 onClick={setIsOpen}>
-          {key.split('').map((letter) => {
+          {key.split('').map((letter, index) => {
             const highlightLetter =
               searchIsFocused &&
               currentSearch.toLowerCase().includes(letter.toLowerCase())
             return (
-              <HeaderLetter isOpen={isOpen} highlight={highlightLetter}>
+              <HeaderLetter
+                key={key + letter + index}
+                isOpen={isOpen}
+                highlight={highlightLetter}
+              >
                 {letter}
               </HeaderLetter>
             )
