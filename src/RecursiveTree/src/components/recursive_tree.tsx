@@ -71,9 +71,15 @@ const RecursiveTree = ({ listMeta, onSelectCallback }: RecursiveTreeProps) => {
     if (checkIfItemIs(branch, ['array'])) {
       return (
         <>
-          {branch.map((branch: TreeBranch) => {
-            return <div key={branch.id}>{createTree(branch)}</div>
+          [
+          {branch.map((branch: TreeBranch, index: number) => {
+            return (
+              <div style={{ paddingLeft: '25px' }} key={branch.id}>
+                {createTree(branch)}
+              </div>
+            )
           })}
+          ]
         </>
       )
     }
@@ -84,9 +90,33 @@ const RecursiveTree = ({ listMeta, onSelectCallback }: RecursiveTreeProps) => {
         key: key,
         branch: branch[key],
       }))
+      const anyBranches = result.some((item) =>
+        checkIfItemIs(item.branch, ['object', 'array'])
+      )
+
+      // handle object with no nested objects
+      if (!anyBranches) {
+        return (
+          <div>
+            {`{`}
+            {result.map((item) => (
+              <div style={{ paddingLeft: '25px' }} key={item.key}>
+                <span className="json-key">{item.key}</span>
+                <span>{`: `}</span>
+                <span className="json-string">{item.branch.toString()}</span>
+              </div>
+            ))}
+            {`}`}
+          </div>
+        )
+      }
+
+      // handle object with nested objects
       return (
         <>
+          {`{`}
           {result.map((item) => {
+            // handle item in object with nested objects and open
             if (checkIfItemIs(item.branch, ['object', 'array']) && isOpen) {
               return (
                 <TreeItem
@@ -102,6 +132,7 @@ const RecursiveTree = ({ listMeta, onSelectCallback }: RecursiveTreeProps) => {
               )
             }
 
+            // handle item in object with nested objects and closed
             if (checkIfItemIs(item.branch, ['object', 'array']) && !isOpen) {
               return (
                 <p onClick={() => toggleItemOpen({ [item.key]: true })}>
@@ -110,18 +141,21 @@ const RecursiveTree = ({ listMeta, onSelectCallback }: RecursiveTreeProps) => {
               )
             }
 
+            // handle item in object with no nested objects
             return (
               <p>
-                <span className="json-key">{item.key}</span> :{' '}
-                {item.branch.toString()}
+                <span className="json-key">{item.key}</span>:{' '}
+                <span className="json-string">{item.branch.toString()}</span>
               </p>
             )
           })}
+          {`}`}
         </>
       )
     }
 
-    return <p>{branch.toString()}</p>
+    // non-object, non-array
+    return <p className="json-string">{branch.toString()}</p>
   }
 
   return (
@@ -135,11 +169,7 @@ const RecursiveTree = ({ listMeta, onSelectCallback }: RecursiveTreeProps) => {
 
 export default RecursiveTree
 
-const StyledLabel = styled.div`
-  &:hover {
-    cursor: pointer;
-  }
-`
+const StyledLabel = styled.div``
 const StyledTreeChildren = styled.div`
   padding-left: 10px;
 `
