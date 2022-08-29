@@ -158,6 +158,7 @@ const RecursiveTree = ({ listMeta }: RecursiveTreeProps) => {
             // handle item in object with nested objects and open
             if (
               checkIfItemIs(item.branch, [`object`, `array`]) &&
+              item.branch &&
               isOpen[item.key]
             ) {
               return (
@@ -179,6 +180,7 @@ const RecursiveTree = ({ listMeta }: RecursiveTreeProps) => {
             // handle item in object with nested objects and closed
             if (
               checkIfItemIs(item.branch, [`object`, `array`]) &&
+              item.branch &&
               !isOpen[item.key]
             ) {
               return (
@@ -199,6 +201,23 @@ const RecursiveTree = ({ listMeta }: RecursiveTreeProps) => {
               )
             }
 
+            let Inner = <span></span>
+            // handle other
+            if (item.branch === null) {
+              Inner = <span className={`json-null`}>null</span>
+            } else if (item.branch === undefined) {
+              Inner = <span className="json-undefined">undefined</span>
+            } else if (item.branch instanceof Date) {
+              Inner = <span className="json-string">{branch.toString()}</span>
+            } else {
+              Inner = (
+                <span className={`json-${typeof item.branch}`}>
+                  {typeof item.branch === `string`
+                    ? `"${item.branch.toString()}"`
+                    : item.branch.toString()}
+                </span>
+              )
+            }
             // handle item in object with no nested objects
             return (
               <div
@@ -207,11 +226,7 @@ const RecursiveTree = ({ listMeta }: RecursiveTreeProps) => {
               >
                 <p>
                   <span className="json-key">{item.key}</span>:{` `}
-                  <span className={`json-${typeof item.branch}`}>
-                    {typeof item.branch === `string`
-                      ? `"${item.branch.toString()}"`
-                      : item.branch.toString()}
-                  </span>
+                  {Inner}
                   <span className="json-mark">
                     {index !== result.length - 1 && `,`}
                   </span>
