@@ -3,73 +3,8 @@ import React, { Fragment, useState } from 'react'
 import { atom, useRecoilState } from 'recoil'
 import styled from 'styled-components'
 
-interface TreeItemProps {
-  readonly id: string
-  readonly label: string
-  readonly isSelected: boolean | undefined
-  readonly children: JSX.Element
-  readonly isOpen: any
-  readonly toggleItemOpen: any
-}
-
 export interface RecursiveTreeProps {
   readonly listMeta: any
-}
-
-const TreeItem = ({
-  label,
-  isSelected,
-  children,
-  toggleItemOpen,
-  isOpen,
-}: TreeItemProps) => {
-  return (
-    <div>
-      <StyledTreeItem
-        className="json-key"
-        style={{
-          opacity: isOpen[label] ? 1 : 0.75,
-          border: `1px solid orange`,
-        }}
-      >
-        <div
-          style={{ paddingLeft: `25px` }}
-          onClick={() =>
-            toggleItemOpen((prev: any) => ({
-              ...prev,
-              [label]: !prev[label],
-            }))
-          }
-        >
-          {<p className="json-text">{isOpen[label] ? `(-)` : `(+)`}</p>}
-        </div>
-        <StyledLabel>{label}</StyledLabel>
-      </StyledTreeItem>
-      <StyledTreeChildren>{isOpen[label] && children}</StyledTreeChildren>
-    </div>
-  )
-}
-
-const checkIfItemIs = (item: any, checkFor: string[]) => {
-  const checks = []
-
-  if (checkFor.includes(`object`)) {
-    checks.push(typeof item === `object`)
-  }
-  if (checkFor.includes(`array`)) {
-    checks.push(Array.isArray(item))
-  }
-  if (checkFor.includes(`string`)) {
-    checks.push(typeof item === `string`)
-  }
-  if (checkFor.includes(`number`)) {
-    checks.push(typeof item === `number`)
-  }
-  if (checkFor.includes(`date`)) {
-    checks.push(item instanceof Date)
-  }
-
-  return checks.some((check) => check)
 }
 
 interface Storage {
@@ -85,7 +20,9 @@ const RecursiveTree = ({ listMeta }: RecursiveTreeProps) => {
   const [isOpen, toggleItemOpen] = useRecoilState(devItemIsOpenState)
   const createTree = (branch: any) => {
     // handle array
-    if (checkIfItemIs(branch, [`array`])) {
+    const branchIsArray = Array.isArray(branch)
+    const branchIsObject = typeof branch === `object`
+    if (branchIsArray) {
       return (
         <>
           [
@@ -116,39 +53,14 @@ const RecursiveTree = ({ listMeta }: RecursiveTreeProps) => {
     }
 
     // handle object
-    if (checkIfItemIs(branch, [`object`])) {
+    if (branchIsObject) {
       const result = Object.keys(branch).map((key) => ({
         key: key,
         branch: branch[key],
       }))
-      const anyBranches = result.some((item) =>
-        checkIfItemIs(item.branch, [`object`, `array`])
+      const anyBranches = result.some(
+        (item) => Array.isArray(item.branch) || typeof item.branch === `object`
       )
-
-      // handle object with no nested objects
-      if (!anyBranches) {
-        return (
-          <div>
-            {result.map((item, index) => (
-              <Fragment key={item.key}>
-                {index === 0 ? `{` : ``}
-                <div
-                  style={{ paddingLeft: `25px`, border: `1px solid purple` }}
-                  key={item.key}
-                >
-                  <span className="json-key">{item.key}</span>
-                  <span>{`: `}</span>
-                  <span className={`json-${typeof item.branch}`}>
-                    {item.branch.toString()}
-                  </span>
-                  <span>{index !== result.length - 1 && `,`}</span>
-                </div>
-                {index === result.length - 1 ? `},` : ``}
-              </Fragment>
-            ))}
-          </div>
-        )
-      }
 
       // handle object with nested objects
       return (
@@ -156,30 +68,41 @@ const RecursiveTree = ({ listMeta }: RecursiveTreeProps) => {
           {`{`}
           {result.map((item, index) => {
             // handle item in object with nested objects and open
+            const itemIsObject = typeof item.branch === `object`
+            const itemIsArray = Array.isArray(item.branch)
+
             if (
-              checkIfItemIs(item.branch, [`object`, `array`]) &&
+              (itemIsObject || itemIsArray) &&
               item.branch &&
               isOpen[item.key]
             ) {
               return (
-                <TreeItem
-                  id={item.key}
+                <div
+                  style={{ paddingLeft: `25px`, border: `1px solid orange` }}
                   key={item.key}
-                  isSelected={item.branch}
-                  label={item.key}
-                  isOpen={isOpen}
-                  toggleItemOpen={toggleItemOpen}
                 >
-                  <div style={{ paddingLeft: `25px`, border: `1px solid red` }}>
+                  <p
+                    className="json-key"
+                    style={{ fontWeight: `bold` }}
+                    onClick={() =>
+                      toggleItemOpen((prev) => ({ ...prev, [item.key]: false }))
+                    }
+                  >
+                    {Array.isArray(item.branch)
+                      ? `[ ${item.branch.length} ]`
+                      : `{ ${Object.keys(item.branch).length} }`}{' '}
+                    {item.key}
+                  </p>
+                  <div style={{ paddingLeft: `25px` }}>
                     {createTree(item.branch)}
                   </div>
-                </TreeItem>
+                </div>
               )
             }
 
             // handle item in object with nested objects and closed
             if (
-              checkIfItemIs(item.branch, [`object`, `array`]) &&
+              (itemIsObject || itemIsArray) &&
               item.branch &&
               !isOpen[item.key]
             ) {
@@ -195,7 +118,10 @@ const RecursiveTree = ({ listMeta }: RecursiveTreeProps) => {
                       toggleItemOpen((prev) => ({ ...prev, [item.key]: true }))
                     }
                   >
-                    (*) {item.key}
+                    {Array.isArray(item.branch)
+                      ? `[${item.branch.length}]`
+                      : `{${Object.keys(item.branch).length}}`}{' '}
+                    {item.key}
                   </p>
                 </div>
               )
@@ -241,12 +167,17 @@ const RecursiveTree = ({ listMeta }: RecursiveTreeProps) => {
 
     // non-object, non-array
     return (
-      <p
-        style={{ border: `1px solid pink` }}
-        className={`json-${typeof branch}`}
-      >
-        {branch.toString()}
-      </p>
+      <span>
+        <span
+          style={{ border: '1px solid tan' }}
+          className={`json-${typeof branch}`}
+        >
+          {typeof branch === `string`
+            ? `"${branch.toString()}"`
+            : branch.toString()}
+        </span>
+        <span className="json-mark">{`,`}</span>
+      </span>
     )
   }
 
@@ -260,13 +191,3 @@ const RecursiveTree = ({ listMeta }: RecursiveTreeProps) => {
 }
 
 export default RecursiveTree
-
-const StyledLabel = styled.div``
-const StyledTreeChildren = styled.div`
-  padding-left: 10px;
-`
-const StyledTreeItem = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-`
