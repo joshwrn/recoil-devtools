@@ -31,7 +31,11 @@ const RecursiveTree = ({ contents }: any) => {
     if (branchIsArray) {
       return (
         <>
-          [
+          <span
+            style={{ transform: 'translateX(-12px)', display: 'inline-block' }}
+          >
+            [
+          </span>
           {branch.map((branch: any, index: number) => {
             return (
               <div
@@ -68,7 +72,11 @@ const RecursiveTree = ({ contents }: any) => {
       // handle object with nested objects
       return (
         <>
-          {`{`}
+          <span
+            style={{ transform: 'translateX(-12px)', display: 'inline-block' }}
+          >
+            {'{'}
+          </span>
           {result.map((item, index) => {
             // handle item in object with nested objects and open
             const itemIsObject = typeof item.branch === `object`
@@ -84,7 +92,7 @@ const RecursiveTree = ({ contents }: any) => {
                   style={{ paddingLeft: `25px`, border: `1px solid orange` }}
                   key={item.key}
                 >
-                  <p
+                  <span
                     className="json-key"
                     style={{ fontWeight: `bold` }}
                     onClick={() =>
@@ -95,10 +103,10 @@ const RecursiveTree = ({ contents }: any) => {
                       ? `[ ${item.branch.length} ]`
                       : `{ ${Object.keys(item.branch).length} }`}{' '}
                     {item.key}
-                  </p>
-                  <div style={{ paddingLeft: `25px` }}>
+                  </span>
+                  <span style={{ paddingLeft: `25px` }}>
                     {createTree(item.branch)}
-                  </div>
+                  </span>
                 </div>
               )
             }

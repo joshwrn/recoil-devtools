@@ -32,7 +32,8 @@ const StateItem: FC<{ snapshot: any; node: any }> = ({ snapshot, node }) => {
     <div style={{ padding: '5px' }}>
       <span onClick={() => setIsOpen(!isOpen)}>
         {node.key}
-        {isOpen && ':'}
+
+        {isOpen && <span style={{ paddingRight: '12px' }}>:</span>}
       </span>
       {isOpen && <RecursiveTree key={node.key} contents={contents} />}
     </div>
