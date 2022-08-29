@@ -150,7 +150,7 @@ const Tools: FC = () => {
               <DevtoolsHeader />
               <Inner height={height} position={position}>
                 <>
-                  {fuse.search(userInput).map((item) => {
+                  {/* {fuse.search(userInput).map((item) => {
                     const node = item.item
                     const param = node.key.split(`__`)[1]
                     const { contents } = snapshot.getLoadable(node)
@@ -164,8 +164,8 @@ const Tools: FC = () => {
                         data={data}
                       />
                     )
-                  })}
-                  {/* <App /> */}
+                  })} */}
+                  <App />
                 </>
               </Inner>
             </>

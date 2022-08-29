@@ -72,7 +72,11 @@ const checkIfItemIs = (item: any, checkFor: string[]) => {
   return checks.some((check) => check)
 }
 
-const devItemIsOpenState = atom({
+interface Storage {
+  [key: string]: boolean
+}
+
+const devItemIsOpenState = atom<Storage>({
   key: `devItemIsOpenState`,
   default: {},
 })
@@ -150,7 +154,7 @@ const RecursiveTree = ({ listMeta }: RecursiveTreeProps) => {
       return (
         <>
           {`{`}
-          {result.map((item) => {
+          {result.map((item, index) => {
             // handle item in object with nested objects and open
             if (
               checkIfItemIs(item.branch, [`object`, `array`]) &&
@@ -178,14 +182,20 @@ const RecursiveTree = ({ listMeta }: RecursiveTreeProps) => {
               !isOpen[item.key]
             ) {
               return (
-                <p
-                  style={{ border: `1px solid blue` }}
-                  onClick={() =>
-                    toggleItemOpen((prev) => ({ ...prev, [item.key]: true }))
-                  }
+                <div
+                  style={{ paddingLeft: `25px`, border: `1px solid blue` }}
+                  key={item.key}
                 >
-                  (*) {item.key}
-                </p>
+                  <p
+                    className="json-key"
+                    style={{ fontWeight: `bold` }}
+                    onClick={() =>
+                      toggleItemOpen((prev) => ({ ...prev, [item.key]: true }))
+                    }
+                  >
+                    (*) {item.key}
+                  </p>
+                </div>
               )
             }
 
@@ -201,6 +211,9 @@ const RecursiveTree = ({ listMeta }: RecursiveTreeProps) => {
                     {typeof item.branch === `string`
                       ? `"${item.branch.toString()}"`
                       : item.branch.toString()}
+                  </span>
+                  <span className="json-mark">
+                    {index !== result.length - 1 && `,`}
                   </span>
                 </p>
               </div>
