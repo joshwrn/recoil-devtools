@@ -16,8 +16,14 @@ const devItemIsOpenState = atom<Storage>({
   default: {},
 })
 
-const RecursiveTree = ({ listMeta }: RecursiveTreeProps) => {
+const nullState = atom<null>({
+  key: `nullState`,
+  default: null,
+})
+
+const RecursiveTree = ({ contents }: any) => {
   const [isOpen, toggleItemOpen] = useRecoilState(devItemIsOpenState)
+  const [nullStateValue, setNullStateValue] = useRecoilState(nullState)
   const createTree = (branch: any) => {
     // handle array
     const branchIsArray = Array.isArray(branch)
@@ -43,13 +49,13 @@ const RecursiveTree = ({ listMeta }: RecursiveTreeProps) => {
 
     // handle other
     if (branch === null) {
-      return <p className={`json-null`}>null</p>
+      return <span className={`json-null`}>null</span>
     }
     if (branch === undefined) {
-      return <p className="json-undefined">undefined</p>
+      return <span className="json-undefined">undefined</span>
     }
     if (branch instanceof Date) {
-      return <p className="json-string">{branch.toString()}</p>
+      return <span className="json-string">{branch.toString()}</span>
     }
 
     // handle object
@@ -58,9 +64,6 @@ const RecursiveTree = ({ listMeta }: RecursiveTreeProps) => {
         key: key,
         branch: branch[key],
       }))
-      const anyBranches = result.some(
-        (item) => Array.isArray(item.branch) || typeof item.branch === `object`
-      )
 
       // handle object with nested objects
       return (
@@ -165,7 +168,7 @@ const RecursiveTree = ({ listMeta }: RecursiveTreeProps) => {
       )
     }
 
-    // non-object, non-array
+    // non-object, non-array. aka is a "primitive"
     return (
       <span>
         <span
@@ -176,18 +179,12 @@ const RecursiveTree = ({ listMeta }: RecursiveTreeProps) => {
             ? `"${branch.toString()}"`
             : branch.toString()}
         </span>
-        <span className="json-mark">{`,`}</span>
+        {/* <span className="json-mark">{`,`}</span> */}
       </span>
     )
   }
 
-  return (
-    <div>
-      {listMeta.map((branch: any, i: any) => (
-        <div key={i}>{createTree(branch)}</div>
-      ))}
-    </div>
-  )
+  return <span style={{ paddingLeft: '10px' }}>{createTree(contents)}</span>
 }
 
 export default RecursiveTree
