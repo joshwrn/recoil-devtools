@@ -1,10 +1,11 @@
-import React, { FC, useState } from 'react'
+import type { FC } from 'react'
+import React, { useState } from 'react'
+
 import { useRecoilSnapshot, useRecoilState } from 'recoil'
-import { fakeState } from '../../fakeState'
+
 import RecursiveTree from './components/recursive_tree'
 
-function App() {
-  const fake = useRecoilState(fakeState)
+const App: FC = () => {
   const snapshot = useRecoilSnapshot()
 
   snapshot.retain()
@@ -19,7 +20,7 @@ function App() {
         const data = contents instanceof Set ? Array.from(contents) : contents
         console.log({ contents })
 
-        return <StateItem node={node} snapshot={snapshot} />
+        return <StateItem key={node.key} node={node} snapshot={snapshot} />
       })}
     </>
   )
@@ -29,11 +30,10 @@ const StateItem: FC<{ snapshot: any; node: any }> = ({ snapshot, node }) => {
   const { contents } = snapshot.getLoadable(node)
   const [isOpen, setIsOpen] = useState(false)
   return (
-    <div style={{ padding: '5px' }}>
+    <div style={{ padding: `5px` }}>
       <span onClick={() => setIsOpen(!isOpen)}>
         {node.key}
-
-        {isOpen && <span style={{ paddingRight: '12px' }}>:</span>}
+        {isOpen && <span>:</span>}
       </span>
       {isOpen && <RecursiveTree key={node.key} contents={contents} />}
     </div>

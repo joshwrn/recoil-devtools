@@ -1,3 +1,4 @@
+import type { FC } from 'react'
 import React, { Fragment, useState } from 'react'
 
 import { atom, useRecoilState } from 'recoil'
@@ -6,6 +7,8 @@ import styled from 'styled-components'
 export interface RecursiveTreeProps {
   readonly listMeta: any
 }
+
+const DEBUG = false
 
 interface Storage {
   [key: string]: boolean
@@ -21,7 +24,7 @@ const nullState = atom<null>({
   default: null,
 })
 
-const RecursiveTree = ({ contents }: any) => {
+const RecursiveTree: FC<{ contents: any }> = ({ contents }) => {
   const [isOpen, toggleItemOpen] = useRecoilState(devItemIsOpenState)
   const [nullStateValue, setNullStateValue] = useRecoilState(nullState)
   const createTree = (branch: any) => {
@@ -31,15 +34,14 @@ const RecursiveTree = ({ contents }: any) => {
     if (branchIsArray) {
       return (
         <>
-          <span
-            style={{ transform: 'translateX(-12px)', display: 'inline-block' }}
-          >
-            [
-          </span>
+          <span style={{ display: `inline-block` }}>[</span>
           {branch.map((branch: any, index: number) => {
             return (
               <div
-                style={{ paddingLeft: `25px`, border: `1px solid gray` }}
+                style={{
+                  paddingLeft: `25px`,
+                  border: DEBUG ? `1px solid gray` : ``,
+                }}
                 key={branch.id}
               >
                 {createTree(branch)}
@@ -72,11 +74,7 @@ const RecursiveTree = ({ contents }: any) => {
       // handle object with nested objects
       return (
         <>
-          <span
-            style={{ transform: 'translateX(-12px)', display: 'inline-block' }}
-          >
-            {'{'}
-          </span>
+          <span style={{ display: `inline-block` }}>{`{`}</span>
           {result.map((item, index) => {
             // handle item in object with nested objects and open
             const itemIsObject = typeof item.branch === `object`
@@ -89,7 +87,10 @@ const RecursiveTree = ({ contents }: any) => {
             ) {
               return (
                 <div
-                  style={{ paddingLeft: `25px`, border: `1px solid orange` }}
+                  style={{
+                    paddingLeft: `25px`,
+                    border: DEBUG ? `1px solid orange` : ``,
+                  }}
                   key={item.key}
                 >
                   <span
@@ -101,10 +102,11 @@ const RecursiveTree = ({ contents }: any) => {
                   >
                     {Array.isArray(item.branch)
                       ? `[ ${item.branch.length} ]`
-                      : `{ ${Object.keys(item.branch).length} }`}{' '}
-                    {item.key}
+                      : `{ ${Object.keys(item.branch).length} }`}
+                    {` `}
+                    {item.key}:
                   </span>
-                  <span style={{ paddingLeft: `25px` }}>
+                  <span style={{ paddingLeft: `12px` }}>
                     {createTree(item.branch)}
                   </span>
                 </div>
@@ -119,7 +121,10 @@ const RecursiveTree = ({ contents }: any) => {
             ) {
               return (
                 <div
-                  style={{ paddingLeft: `25px`, border: `1px solid blue` }}
+                  style={{
+                    paddingLeft: `25px`,
+                    border: DEBUG ? `1px solid blue` : ``,
+                  }}
                   key={item.key}
                 >
                   <p
@@ -131,7 +136,8 @@ const RecursiveTree = ({ contents }: any) => {
                   >
                     {Array.isArray(item.branch)
                       ? `[${item.branch.length}]`
-                      : `{${Object.keys(item.branch).length}}`}{' '}
+                      : `{${Object.keys(item.branch).length}}`}
+                    {` `}
                     {item.key}
                   </p>
                 </div>
@@ -158,7 +164,10 @@ const RecursiveTree = ({ contents }: any) => {
             // handle item in object with no nested objects
             return (
               <div
-                style={{ paddingLeft: `25px`, border: `1px solid green` }}
+                style={{
+                  paddingLeft: `25px`,
+                  border: DEBUG ? `1px solid green` : ``,
+                }}
                 key={item.key}
               >
                 <p>
@@ -180,7 +189,7 @@ const RecursiveTree = ({ contents }: any) => {
     return (
       <span>
         <span
-          style={{ border: '1px solid tan' }}
+          style={{ border: DEBUG ? `1px solid tan` : `` }}
           className={`json-${typeof branch}`}
         >
           {typeof branch === `string`
@@ -192,7 +201,7 @@ const RecursiveTree = ({ contents }: any) => {
     )
   }
 
-  return <span style={{ paddingLeft: '10px' }}>{createTree(contents)}</span>
+  return <span style={{ paddingLeft: `10px` }}>{createTree(contents)}</span>
 }
 
 export default RecursiveTree
