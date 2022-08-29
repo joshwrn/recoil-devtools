@@ -2,7 +2,6 @@ import React, { FC, useState } from 'react'
 import { useRecoilSnapshot, useRecoilState } from 'recoil'
 import { fakeState } from '../../fakeState'
 import RecursiveTree from './components/recursive_tree'
-import { mockOrgTreeList } from './data'
 import { TreeBranch } from './types/types'
 
 const onSelect = (value: TreeBranch) => {
@@ -37,13 +36,7 @@ const StateItem: FC<{ snapshot: any; node: any }> = ({ snapshot, node }) => {
   return (
     <div style={{ padding: '5px' }}>
       <p onClick={() => setIsOpen(!isOpen)}>{node.key}</p>
-      {isOpen && (
-        <RecursiveTree
-          key={node.key}
-          listMeta={[contents]}
-          onSelectCallback={onSelect}
-        />
-      )}
+      {isOpen && <RecursiveTree key={node.key} listMeta={[contents]} />}
     </div>
   )
 }

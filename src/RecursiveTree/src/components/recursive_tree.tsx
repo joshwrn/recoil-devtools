@@ -1,6 +1,7 @@
 import React, { Fragment, useState } from 'react'
+
+import { atom, useRecoilState } from 'recoil'
 import styled from 'styled-components'
-import { Tree, TreeBranch } from '../types/types'
 
 interface TreeItemProps {
   readonly id: string
@@ -13,7 +14,6 @@ interface TreeItemProps {
 
 export interface RecursiveTreeProps {
   readonly listMeta: any
-  readonly onSelectCallback: (value: TreeBranch) => void
 }
 
 const TreeItem = ({
@@ -25,8 +25,15 @@ const TreeItem = ({
 }: TreeItemProps) => {
   return (
     <div>
-      <StyledTreeItem>
+      <StyledTreeItem
+        className="json-key"
+        style={{
+          opacity: isOpen[label] ? 1 : 0.75,
+          border: `1px solid orange`,
+        }}
+      >
         <div
+          style={{ paddingLeft: `25px` }}
           onClick={() =>
             toggleItemOpen((prev: any) => ({
               ...prev,
@@ -34,7 +41,7 @@ const TreeItem = ({
             }))
           }
         >
-          {isOpen[label] ? <p>{'(-)'}</p> : <p>{'(+)'}</p>}
+          {<p className="json-text">{isOpen[label] ? `(-)` : `(+)`}</p>}
         </div>
         <StyledLabel>{label}</StyledLabel>
       </StyledTreeItem>
@@ -46,35 +53,44 @@ const TreeItem = ({
 const checkIfItemIs = (item: any, checkFor: string[]) => {
   const checks = []
 
-  if (checkFor.includes('object')) {
-    checks.push(typeof item === 'object')
+  if (checkFor.includes(`object`)) {
+    checks.push(typeof item === `object`)
   }
-  if (checkFor.includes('array')) {
+  if (checkFor.includes(`array`)) {
     checks.push(Array.isArray(item))
   }
-  if (checkFor.includes('string')) {
-    checks.push(typeof item === 'string')
+  if (checkFor.includes(`string`)) {
+    checks.push(typeof item === `string`)
   }
-  if (checkFor.includes('number')) {
-    checks.push(typeof item === 'number')
+  if (checkFor.includes(`number`)) {
+    checks.push(typeof item === `number`)
+  }
+  if (checkFor.includes(`date`)) {
+    checks.push(item instanceof Date)
   }
 
   return checks.some((check) => check)
 }
 
-const RecursiveTree = ({ listMeta, onSelectCallback }: RecursiveTreeProps) => {
-  const [isOpen, toggleItemOpen] = useState({})
-  const createTree = (branch: any) => {
-    console.log({ branch })
+const devItemIsOpenState = atom({
+  key: `devItemIsOpenState`,
+  default: {},
+})
 
+const RecursiveTree = ({ listMeta }: RecursiveTreeProps) => {
+  const [isOpen, toggleItemOpen] = useRecoilState(devItemIsOpenState)
+  const createTree = (branch: any) => {
     // handle array
-    if (checkIfItemIs(branch, ['array'])) {
+    if (checkIfItemIs(branch, [`array`])) {
       return (
         <>
           [
-          {branch.map((branch: TreeBranch, index: number) => {
+          {branch.map((branch: any, index: number) => {
             return (
-              <div style={{ paddingLeft: '25px' }} key={branch.id}>
+              <div
+                style={{ paddingLeft: `25px`, border: `1px solid gray` }}
+                key={branch.id}
+              >
                 {createTree(branch)}
               </div>
             )
@@ -84,29 +100,48 @@ const RecursiveTree = ({ listMeta, onSelectCallback }: RecursiveTreeProps) => {
       )
     }
 
+    // handle other
+    if (branch === null) {
+      return <p className={`json-null`}>null</p>
+    }
+    if (branch === undefined) {
+      return <p className="json-undefined">undefined</p>
+    }
+    if (branch instanceof Date) {
+      return <p className="json-string">{branch.toString()}</p>
+    }
+
     // handle object
-    if (checkIfItemIs(branch, ['object'])) {
+    if (checkIfItemIs(branch, [`object`])) {
       const result = Object.keys(branch).map((key) => ({
         key: key,
         branch: branch[key],
       }))
       const anyBranches = result.some((item) =>
-        checkIfItemIs(item.branch, ['object', 'array'])
+        checkIfItemIs(item.branch, [`object`, `array`])
       )
 
       // handle object with no nested objects
       if (!anyBranches) {
         return (
           <div>
-            {`{`}
-            {result.map((item) => (
-              <div style={{ paddingLeft: '25px' }} key={item.key}>
-                <span className="json-key">{item.key}</span>
-                <span>{`: `}</span>
-                <span className="json-string">{item.branch.toString()}</span>
-              </div>
+            {result.map((item, index) => (
+              <Fragment key={item.key}>
+                {index === 0 ? `{` : ``}
+                <div
+                  style={{ paddingLeft: `25px`, border: `1px solid purple` }}
+                  key={item.key}
+                >
+                  <span className="json-key">{item.key}</span>
+                  <span>{`: `}</span>
+                  <span className={`json-${typeof item.branch}`}>
+                    {item.branch.toString()}
+                  </span>
+                  <span>{index !== result.length - 1 && `,`}</span>
+                </div>
+                {index === result.length - 1 ? `},` : ``}
+              </Fragment>
             ))}
-            {`}`}
           </div>
         )
       }
@@ -117,7 +152,10 @@ const RecursiveTree = ({ listMeta, onSelectCallback }: RecursiveTreeProps) => {
           {`{`}
           {result.map((item) => {
             // handle item in object with nested objects and open
-            if (checkIfItemIs(item.branch, ['object', 'array']) && isOpen) {
+            if (
+              checkIfItemIs(item.branch, [`object`, `array`]) &&
+              isOpen[item.key]
+            ) {
               return (
                 <TreeItem
                   id={item.key}
@@ -127,26 +165,45 @@ const RecursiveTree = ({ listMeta, onSelectCallback }: RecursiveTreeProps) => {
                   isOpen={isOpen}
                   toggleItemOpen={toggleItemOpen}
                 >
-                  <div>{createTree(item.branch)}</div>
+                  <div style={{ paddingLeft: `25px`, border: `1px solid red` }}>
+                    {createTree(item.branch)}
+                  </div>
                 </TreeItem>
               )
             }
 
             // handle item in object with nested objects and closed
-            if (checkIfItemIs(item.branch, ['object', 'array']) && !isOpen) {
+            if (
+              checkIfItemIs(item.branch, [`object`, `array`]) &&
+              !isOpen[item.key]
+            ) {
               return (
-                <p onClick={() => toggleItemOpen({ [item.key]: true })}>
-                  (+) {item.key}
+                <p
+                  style={{ border: `1px solid blue` }}
+                  onClick={() =>
+                    toggleItemOpen((prev) => ({ ...prev, [item.key]: true }))
+                  }
+                >
+                  (*) {item.key}
                 </p>
               )
             }
 
             // handle item in object with no nested objects
             return (
-              <p>
-                <span className="json-key">{item.key}</span>:{' '}
-                <span className="json-string">{item.branch.toString()}</span>
-              </p>
+              <div
+                style={{ paddingLeft: `25px`, border: `1px solid green` }}
+                key={item.key}
+              >
+                <p>
+                  <span className="json-key">{item.key}</span>:{` `}
+                  <span className={`json-${typeof item.branch}`}>
+                    {typeof item.branch === `string`
+                      ? `"${item.branch.toString()}"`
+                      : item.branch.toString()}
+                  </span>
+                </p>
+              </div>
             )
           })}
           {`}`}
@@ -155,12 +212,19 @@ const RecursiveTree = ({ listMeta, onSelectCallback }: RecursiveTreeProps) => {
     }
 
     // non-object, non-array
-    return <p className="json-string">{branch.toString()}</p>
+    return (
+      <p
+        style={{ border: `1px solid pink` }}
+        className={`json-${typeof branch}`}
+      >
+        {branch.toString()}
+      </p>
+    )
   }
 
   return (
     <div>
-      {listMeta.map((branch: TreeBranch, i: any) => (
+      {listMeta.map((branch: any, i: any) => (
         <div key={i}>{createTree(branch)}</div>
       ))}
     </div>

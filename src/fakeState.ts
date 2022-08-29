@@ -20,17 +20,13 @@ export const fakeState = atom({
     about: 'Dolore minim anim',
     latitude: -46.260756,
     longitude: -66.552275,
-    tags: [
-      'anim',
-      'esse',
-      'enim',
-      'aliqua',
-      'esse',
-      'adipisicing',
-      'adipisicing',
-    ],
+    tags: ['anim', 'esse', 'enim', 'aliqua', 555, 'adipisicing', 'adipisicing'],
     greeting: 'Hello, Pena Velazquez! You have 4 unread messages.',
     favoriteFruit: 'banana',
+    nestedObject: {
+      nestedKey: 'nestedValue',
+      newItem: null,
+    },
     friends: [
       {
         id: 0,

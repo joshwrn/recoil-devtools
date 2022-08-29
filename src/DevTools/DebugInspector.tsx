@@ -12,6 +12,7 @@ import DevtoolsHeader from './DevtoolsHeader'
 import DevToolsIcon from './DevToolsIcon'
 import ResizableContainer from './ResizableContainer'
 import SettingsPage, { recoilDevToolSettingsOpenState } from './SettingsPage'
+import App from '../RecursiveTree/src/App'
 
 export const numberToHex = (n: number): string => {
   return Math.floor((1 - n) * 255).toString(16)
@@ -38,21 +39,16 @@ const Layer = styled.div<{ fonts: string; fontSize: number }>`
     box-sizing: border-box;
   }
   * {
-    font-family: sans-serif;
+    font-family: ${({ fonts }) => (fonts.length > 0 ? fonts + `,` : ``)}
+        'Jetbrains Mono',
+      'Dank Mono', 'Courier New', Courier, monospace !important;
+    font-size: ${({ fontSize }) => fontSize}px !important;
   }
   pre {
-    * {
-      font-family: ${({ fonts }) => (fonts.length > 0 ? fonts + `,` : ``)}
-          'Jetbrains Mono',
-        'Dank Mono', 'Courier New', Courier, monospace !important;
-      font-size: ${({ fontSize }) => fontSize}px !important;
-    }
-    pre {
-      width: 100%;
-      &.param {
-        font-style: italic;
-        opacity: 0.75;
-      }
+    width: 100%;
+    &.param {
+      font-style: italic;
+      opacity: 0.75;
     }
   }
   display: flex;
@@ -169,6 +165,7 @@ const Tools: FC = () => {
                       />
                     )
                   })}
+                  {/* <App /> */}
                 </>
               </Inner>
             </>

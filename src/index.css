@@ -46,5 +46,32 @@ h1 {
 }
 
 .json-string {
-  color: #a8d2ff;
+  color: #70c6f0;
 }
+
+.json-number {
+  color: #ff7b72;
+}
+
+.json-boolean {
+  color: #68c0ff;
+}
+
+.json-null {
+  color: #68c0ff;
+}
+
+.json-text {
+  color: #c9d1d9;
+}
+
+/* 
+  key: `#d2a8ff`,
+    string: `#70c6f0`,
+    number: `#ff7b72`,
+    boolean: `#68c0ff`,
+    null: `#68c0ff`,
+    mark: `#c9d1d9`,
+    link: `#c9d1d9`,
+    text: `#c9d1d9`,
+*/
