@@ -2,11 +2,6 @@ import React, { FC, useState } from 'react'
 import { useRecoilSnapshot, useRecoilState } from 'recoil'
 import { fakeState } from '../../fakeState'
 import RecursiveTree from './components/recursive_tree'
-import { TreeBranch } from './types/types'
-
-const onSelect = (value: TreeBranch) => {
-  // You can put whatever here
-}
 
 function App() {
   const fake = useRecoilState(fakeState)
@@ -35,7 +30,10 @@ const StateItem: FC<{ snapshot: any; node: any }> = ({ snapshot, node }) => {
   const [isOpen, setIsOpen] = useState(false)
   return (
     <div style={{ padding: '5px' }}>
-      <span onClick={() => setIsOpen(!isOpen)}>{node.key}</span>
+      <span onClick={() => setIsOpen(!isOpen)}>
+        {node.key}
+        {isOpen && ':'}
+      </span>
       {isOpen && <RecursiveTree key={node.key} contents={contents} />}
     </div>
   )
