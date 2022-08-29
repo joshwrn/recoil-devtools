@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 
 import { useRecoilSnapshot, useRecoilState } from 'recoil'
 
-import RecursiveTree from './components/recursive_tree'
+import RecursiveTree from './recursive_tree'
 
 const App: FC = () => {
   const snapshot = useRecoilSnapshot()
