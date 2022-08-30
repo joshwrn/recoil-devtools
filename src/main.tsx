@@ -28,7 +28,6 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <ThemeProvider theme={theme}>
     <RecoilRoot>
       <React.StrictMode>
-        <Recursive />
         <RecoilInspector />
       </React.StrictMode>
     </RecoilRoot>

@@ -19,43 +19,41 @@ const devItemIsOpenState = atom<Storage>({
   default: {},
 })
 
-const nullState = atom<null>({
-  key: `nullState`,
-  default: null,
-})
-
-const RecursiveTree: FC<{ contents: any }> = ({ contents }) => {
+const RecursiveTree: FC<{ contents: any; branchName: string }> = ({
+  contents,
+  branchName,
+}) => {
   const [isOpen, toggleItemOpen] = useRecoilState(devItemIsOpenState)
-  const [nullStateValue, setNullStateValue] = useRecoilState(nullState)
-  const createTree = (branch: any) => {
+
+  const createTree = (branch: any, dir: string) => {
     // handle array
     const branchIsArray = Array.isArray(branch)
     const branchIsObject = typeof branch === `object`
     if (branchIsArray) {
       return (
         <>
-          <span style={{ display: `inline-block` }}>[</span>
-          {branch.map((branch: any, index: number) => {
+          <span className="json-mark">[</span>
+          {branch.map((item: any, index: number) => {
             return (
               <div
                 style={{
                   paddingLeft: `25px`,
                   border: DEBUG ? `1px solid gray` : ``,
                 }}
-                key={branch.id}
+                key={dir + index}
               >
-                {createTree(branch)}
+                {createTree(item, `${dir}/${index}`)}
               </div>
             )
           })}
-          ]
+          <span className="json-mark">]</span>
         </>
       )
     }
 
     // handle other
     if (branch === null) {
-      return <span className={`json-null`}>null</span>
+      return <span className="json-null">null</span>
     }
     if (branch === undefined) {
       return <span className="json-undefined">undefined</span>
@@ -74,16 +72,21 @@ const RecursiveTree: FC<{ contents: any }> = ({ contents }) => {
       // handle object with nested objects
       return (
         <>
-          <span style={{ display: `inline-block` }}>{`{`}</span>
+          <span
+            className="json-mark"
+            style={{ display: `inline-block` }}
+          >{`{`}</span>
           {result.map((item, index) => {
-            // handle item in object with nested objects and open
             const itemIsObject = typeof item.branch === `object`
             const itemIsArray = Array.isArray(item.branch)
 
+            const currentDir = `${dir}/${item.key}`
+
+            // handle item in object with nested objects and open
             if (
               (itemIsObject || itemIsArray) &&
               item.branch &&
-              isOpen[item.key]
+              isOpen[currentDir]
             ) {
               return (
                 <div
@@ -91,23 +94,29 @@ const RecursiveTree: FC<{ contents: any }> = ({ contents }) => {
                     paddingLeft: `25px`,
                     border: DEBUG ? `1px solid orange` : ``,
                   }}
-                  key={item.key}
+                  key={currentDir + 'open'}
                 >
                   <span
                     className="json-key"
-                    style={{ fontWeight: `bold` }}
+                    style={{ cursor: `pointer` }}
                     onClick={() =>
-                      toggleItemOpen((prev) => ({ ...prev, [item.key]: false }))
+                      toggleItemOpen((prev) => ({
+                        ...prev,
+                        [currentDir]: false,
+                      }))
                     }
                   >
-                    {Array.isArray(item.branch)
-                      ? `[ ${item.branch.length} ]`
-                      : `{ ${Object.keys(item.branch).length} }`}
-                    {` `}
-                    {item.key}:
+                    <span className="json-mark">
+                      {Array.isArray(item.branch)
+                        ? `[${item.branch.length}]`
+                        : `{${Object.keys(item.branch).length}}`}
+                      {` `}
+                    </span>
+                    {item.key}
+                    <span className="json-mark">:</span>
                   </span>
                   <span style={{ paddingLeft: `12px` }}>
-                    {createTree(item.branch)}
+                    {createTree(item.branch, currentDir)}
                   </span>
                 </div>
               )
@@ -117,7 +126,7 @@ const RecursiveTree: FC<{ contents: any }> = ({ contents }) => {
             if (
               (itemIsObject || itemIsArray) &&
               item.branch &&
-              !isOpen[item.key]
+              !isOpen[currentDir]
             ) {
               return (
                 <div
@@ -125,19 +134,24 @@ const RecursiveTree: FC<{ contents: any }> = ({ contents }) => {
                     paddingLeft: `25px`,
                     border: DEBUG ? `1px solid blue` : ``,
                   }}
-                  key={item.key}
+                  key={currentDir + 'closed'}
                 >
                   <p
                     className="json-key"
-                    style={{ fontWeight: `bold` }}
+                    style={{ cursor: 'pointer' }}
                     onClick={() =>
-                      toggleItemOpen((prev) => ({ ...prev, [item.key]: true }))
+                      toggleItemOpen((prev) => ({
+                        ...prev,
+                        [currentDir]: true,
+                      }))
                     }
                   >
-                    {Array.isArray(item.branch)
-                      ? `[${item.branch.length}]`
-                      : `{${Object.keys(item.branch).length}}`}
-                    {` `}
+                    <span className="json-mark">
+                      {Array.isArray(item.branch)
+                        ? `[${item.branch.length}]`
+                        : `{${Object.keys(item.branch).length}}`}
+                      {` `}
+                    </span>
                     {item.key}
                   </p>
                 </div>
@@ -168,10 +182,12 @@ const RecursiveTree: FC<{ contents: any }> = ({ contents }) => {
                   paddingLeft: `25px`,
                   border: DEBUG ? `1px solid green` : ``,
                 }}
-                key={item.key}
+                key={currentDir + 'no-nested'}
               >
                 <p>
-                  <span className="json-key">{item.key}</span>:{` `}
+                  <span className="json-key">{item.key}</span>
+                  <span className="json-mark">:</span>
+                  {` `}
                   {Inner}
                   <span className="json-mark">
                     {index !== result.length - 1 && `,`}
@@ -180,7 +196,7 @@ const RecursiveTree: FC<{ contents: any }> = ({ contents }) => {
               </div>
             )
           })}
-          {`}`}
+          <span className="json-mark">{`}`}</span>
         </>
       )
     }
@@ -201,7 +217,11 @@ const RecursiveTree: FC<{ contents: any }> = ({ contents }) => {
     )
   }
 
-  return <span style={{ paddingLeft: `10px` }}>{createTree(contents)}</span>
+  return (
+    <span style={{ paddingLeft: `10px` }}>
+      {createTree(contents, branchName)}
+    </span>
+  )
 }
 
 export default RecursiveTree

@@ -44,13 +44,6 @@ const Layer = styled.div<{ fonts: string; fontSize: number }>`
       'Dank Mono', 'Courier New', Courier, monospace !important;
     font-size: ${({ fontSize }) => fontSize}px !important;
   }
-  pre {
-    width: 100%;
-    &.param {
-      font-style: italic;
-      opacity: 0.75;
-    }
-  }
   display: flex;
   flex-direction: column;
   align-items: center;
