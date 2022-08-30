@@ -61,12 +61,12 @@ const StateItem: FC<{ snapshot: any; node: any }> = ({ snapshot, node }) => {
         ref={ref}
       >
         <span>
-          {isObject && !isArray && (
+          {isObject && !isArray && !isSet && !isMap && (
             <span className="json-mark">{`{${
               Object.keys(contents).length
             }} `}</span>
           )}
-          {isArray && (
+          {(isArray || isSet || isMap) && (
             <span className="json-mark">{`[${contents.length}] `}</span>
           )}
         </span>
