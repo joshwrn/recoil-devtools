@@ -10,8 +10,8 @@ import {
   devToolsSearchState,
   numberToHex,
   recoilDevToolsSettingsState,
-} from './DebugInspector'
-import { recoilDevToolSettingsOpenState } from './SettingsPage'
+} from '../App'
+import { recoilDevToolSettingsOpenState } from './Settings'
 
 const Header = styled.div<{ headerTransparency: number }>`
   box-sizing: border-box;

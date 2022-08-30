@@ -6,7 +6,7 @@ import { motion, useMotionValue } from 'framer-motion'
 import { useRecoilState } from 'recoil'
 import styled, { css } from 'styled-components'
 
-import { recoilDevToolsSettingsState } from './DebugInspector'
+import { recoilDevToolsSettingsState } from '../App'
 
 export const HANDLE_SIZE = 10
 

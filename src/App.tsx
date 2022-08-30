@@ -1,143 +1,162 @@
-import { FC, Fragment, useEffect } from 'react'
-import React, { useState } from 'react'
+import type { FC } from 'react'
 
-import { atom, useRecoilSnapshot, useRecoilState, useRecoilValue } from 'recoil'
-import { fakeState, fakeState2 } from './fakeState'
+import { AtomEffect } from 'recoil'
+import { DefaultValue, atom, useRecoilSnapshot, useRecoilValue } from 'recoil'
+import styled, { ThemeProvider } from 'styled-components'
+import { Portal } from 'react-portal'
 
-import RecursiveTree from './recursive_tree'
-import useSticky from './hooks/useSticky'
-import styled from 'styled-components'
-import { numberToHex } from './DevTools/DebugInspector'
+import { devThemes, JsonColors } from './styles/themes'
+import DevtoolsHeader from './components/Header'
+import DevToolsIcon from './components/Icon'
+import ResizableContainer from './components/ResizableContainer'
+import SettingsPage, {
+  recoilDevToolSettingsOpenState,
+} from './components/Settings'
+import App from './components/List'
 
-import {
-  devToolsSearchState,
-  devItemIsOpenState,
-} from './DevTools/DebugInspector'
+export const numberToHex = (n: number): string => {
+  return Math.floor((1 - n) * 255).toString(16)
+}
 
-import { searchIsFocusedState } from './DevTools/DevtoolsHeader'
+const Backdrop = styled.div<{ transparency: number; vibrancy: number }>`
+  position: absolute;
+  background: ${({ theme, transparency }) =>
+    `${theme.background}${numberToHex(transparency)}`};
+  backdrop-filter: blur(
+    ${({ vibrancy, transparency }) =>
+      vibrancy && transparency ? vibrancy : 0}px
+  );
+  pointer-events: none;
+  z-index: 20000;
+  height: 100%;
+  width: 100%;
+`
+const Layer = styled.div<{ fonts: string; fontSize: number }>`
+  * {
+    margin: 0;
+    outline: none;
+    border: none;
+    box-sizing: border-box;
+  }
+  * {
+    font-family: ${({ fonts }) => (fonts.length > 0 ? fonts + `,` : ``)}
+        'Jetbrains Mono',
+      'Dank Mono', 'Courier New', Courier, monospace !important;
+    font-size: ${({ fontSize }) => fontSize}px !important;
+  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 20001;
+  width: 100%;
+`
+const Inner = styled.div<{ height: number; position: string }>`
+  ${JsonColors}
+  overflow-y: overlay;
+  overflow-x: overlay;
+  width: 100%;
+  height: ${({ height, position }) =>
+    position === `bottom` ? `${height}px` : `100vh`};
+  padding-top: 60px;
+  padding-left: 5px;
+  top: 0;
+`
 
-const nullState = atom<Set<string>>({
-  key: `nullState`,
-  default: new Set(),
+export const localStorageEffect: <T>(key: string) => AtomEffect<T> =
+  (key: string) =>
+  ({ setSelf, onSet }) => {
+    const savedValue = localStorage.getItem(key)
+    if (savedValue != null) {
+      setSelf(JSON.parse(savedValue))
+    }
+    onSet((newValue) => {
+      if (newValue instanceof DefaultValue) {
+        localStorage.removeItem(key)
+      } else {
+        localStorage.setItem(key, JSON.stringify(newValue))
+      }
+    })
+  }
+
+export const recoilDevToolsSettingsState = atom({
+  key: `recoilDevToolsSettingsState`,
+  default: {
+    position: `right`,
+    theme: `Light`,
+    width: 430,
+    height: 430,
+    transparency: 0,
+    vibrancy: 30,
+    fonts: ``,
+    fontSize: 16,
+    itemSpacing: 5,
+  },
+  effects: [localStorageEffect(`devToolsSettingsStateStorage`)],
 })
 
-const App: FC = () => {
+export const devToolsOpenState = atom({
+  key: `devToolsOpen`,
+  default: false,
+  effects: [localStorageEffect(`devToolsOpen`)],
+})
+
+export const devToolsSearchState = atom({
+  key: `devToolsSearch`,
+  default: ``,
+  effects: [localStorageEffect(`devToolsSearchState`)],
+})
+
+export const devItemIsOpenState = atom<Storage>({
+  key: `devItemIsOpenState`,
+  default: {},
+  effects: [localStorageEffect(`devItemIsOpenState`)],
+})
+
+interface Storage {
+  [key: string]: boolean
+}
+
+const Tools: FC = () => {
+  const settingsOpen = useRecoilValue(recoilDevToolSettingsOpenState)
+  const { theme, transparency, position, height, vibrancy, fonts, fontSize } =
+    useRecoilValue(recoilDevToolsSettingsState)
+
   const snapshot = useRecoilSnapshot()
-  const userInput = useRecoilValue(devToolsSearchState)
-  const searchIsFocused = useRecoilValue(searchIsFocusedState)
-  const fake = useRecoilValue(fakeState)
-  const fake2 = useRecoilValue(fakeState2)
-  const [set, setSet] = useRecoilState(nullState)
 
   snapshot.retain()
 
-  const list = Array.from(snapshot.getNodes_UNSTABLE())
+  return (
+    <ThemeProvider theme={devThemes[theme] ?? devThemes[`Light`]}>
+      <ResizableContainer>
+        <Layer fonts={fonts} fontSize={fontSize}>
+          {settingsOpen && <SettingsPage />}
+          {!settingsOpen && (
+            <>
+              <DevtoolsHeader />
+              <Inner height={height} position={position}>
+                <App />
+              </Inner>
+            </>
+          )}
+        </Layer>
+        <Backdrop transparency={transparency} vibrancy={vibrancy} />
+      </ResizableContainer>
+    </ThemeProvider>
+  )
+}
 
+const RecoilInspector: FC = () => {
+  const isOpen = useRecoilValue(devToolsOpenState)
   return (
     <>
-      {list.map((item) => {
-        const node = item
-        const param = node.key.split(`__`)[1]
-        const { contents } = snapshot.getLoadable(node)
-        const data = contents instanceof Set ? Array.from(contents) : contents
-
-        return (
-          <Fragment key={'frag' + node.key}>
-            {node.key.toLowerCase().includes(userInput) && (
-              <StateItem
-                key={'state:' + node.key}
-                node={node}
-                snapshot={snapshot}
-                input={userInput}
-                searchIsFocused={searchIsFocused}
-              />
-            )}
-          </Fragment>
-        )
-      })}
+      <DevToolsIcon />
+      {isOpen && (
+        <Portal>
+          <Tools />
+        </Portal>
+      )}
     </>
   )
 }
 
-const StateItem: FC<{
-  snapshot: any
-  node: any
-  input: string
-  searchIsFocused: boolean
-}> = ({ snapshot, node, input, searchIsFocused }) => {
-  let { contents } = snapshot.getLoadable(node)
-  const [ref, isStuck] = useSticky()
-  const [isOpen, setIsOpen] = useRecoilState(devItemIsOpenState)
-
-  const isDate = contents instanceof Date
-  const isObject = typeof contents === `object` && contents && !isDate
-  const isArray = Array.isArray(contents)
-  const isSet = contents instanceof Set
-  const isMap = contents instanceof Map
-
-  if (isSet || isMap) {
-    contents = Array.from(contents)
-  }
-
-  return (
-    <div style={{ padding: '5px 5px' }}>
-      <ItemHeader
-        isStuck={isStuck && isOpen && (isObject || isArray)}
-        className="json-mark"
-        onClick={() =>
-          setIsOpen((prev) => ({
-            ...prev,
-            [node.key]: !prev[node.key],
-          }))
-        }
-        ref={ref}
-      >
-        <span>
-          {isObject && !isArray && !isSet && !isMap && (
-            <span className="json-mark">{`{${
-              Object.keys(contents).length
-            }} `}</span>
-          )}
-          {(isArray || isSet || isMap) && (
-            <span className="json-mark">{`[${contents.length}] `}</span>
-          )}
-        </span>
-        {node.key.split('').map((key: string, index: number) => {
-          return (
-            <ItemLetter
-              highlight={input.includes(key.toLowerCase())}
-              key={index}
-            >
-              {key}
-            </ItemLetter>
-          )
-        })}
-      </ItemHeader>
-      {isOpen[node.key] && (
-        <RecursiveTree
-          key={node.key}
-          branchName={'branch' + node.key}
-          contents={contents}
-        />
-      )}
-    </div>
-  )
-}
-
-export default App
-
-const ItemHeader = styled.span<{ isStuck: boolean }>`
-  display: inline-block;
-  width: ${({ isStuck }) => (isStuck ? `calc(100% + 15px)` : `auto`)};
-  transform: ${({ isStuck }) => (isStuck ? `translateX(-10px)` : `none`)};
-  padding: ${({ isStuck }) => (isStuck ? `0 15px` : `0`)};
-  position: sticky;
-  top: 0;
-  backdrop-filter: ${({ isStuck }) => (isStuck ? `blur(30px)` : `none`)};
-  cursor: pointer;
-  background: ${({ isStuck, theme }) =>
-    isStuck ? theme.headerBackground + numberToHex(0.5) : `transparent`};
-`
-const ItemLetter = styled.span<{ highlight: boolean }>`
-  color: ${({ highlight, theme }) => (highlight ? theme.boolean : `inherit`)};
-`
+export default RecoilInspector

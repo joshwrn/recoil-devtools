@@ -3,10 +3,7 @@ import React, { Fragment, useState } from 'react'
 
 import { atom, useRecoilState } from 'recoil'
 import styled from 'styled-components'
-import {
-  devItemIsOpenState,
-  localStorageEffect,
-} from './DevTools/DebugInspector'
+import { devItemIsOpenState, localStorageEffect } from '../App'
 
 // import * as Styled from './Styles'
 import {
@@ -20,7 +17,7 @@ import {
   Link,
   Text,
   Box,
-} from './Styles'
+} from '../styles/Styles'
 
 const RecursiveTree: FC<{ contents: any; branchName: string }> = ({
   contents,

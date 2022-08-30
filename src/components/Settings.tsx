@@ -4,8 +4,8 @@ import type { FC } from 'react'
 import { atom, useRecoilState, useSetRecoilState } from 'recoil'
 import styled from 'styled-components'
 
-import { recoilDevToolsSettingsState } from './DebugInspector'
-import { devThemes } from './DevThemes'
+import { recoilDevToolsSettingsState } from '../App'
+import { devThemes } from '../styles/themes'
 import { HANDLE_SIZE } from './ResizableContainer'
 /* eslint-disable max-lines */
 

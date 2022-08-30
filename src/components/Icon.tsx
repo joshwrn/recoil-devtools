@@ -3,7 +3,7 @@ import type { FC } from 'react'
 import { useRecoilState } from 'recoil'
 import styled from 'styled-components'
 
-import { devToolsOpenState } from './DebugInspector'
+import { devToolsOpenState } from '../App'
 // import { ReactComponent as Logo } from './recoil-logo.svg'
 
 const RecoilIcon = styled.button<{
