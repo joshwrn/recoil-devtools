@@ -2,8 +2,9 @@ import type { RefObject } from 'react'
 import { useEffect, useRef, useState } from 'react'
 
 export const useSticky = (): [
+  ref: RefObject<HTMLDivElement> | null,
   isStuck: boolean,
-  ref: RefObject<HTMLDivElement> | null
+  setIsStuck: (isStuck: boolean) => void
 ] => {
   const [isStuck, setIsStuck] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
@@ -18,11 +19,11 @@ export const useSticky = (): [
         }
       )
       observer.observe(cachedRef)
-      return () => observer.unobserve(cachedRef)
+      return () => (setIsStuck(false), observer.unobserve(cachedRef))
     }
   }, [ref.current])
 
-  return [isStuck, ref]
+  return [ref, isStuck, setIsStuck]
 }
 
 export default useSticky

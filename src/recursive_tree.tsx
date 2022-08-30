@@ -8,7 +8,19 @@ import {
   localStorageEffect,
 } from './DevTools/DebugInspector'
 
-const DEBUG = false
+// import * as Styled from './Styles'
+import {
+  Mark,
+  Null,
+  Undefined,
+  String,
+  Number,
+  Boolean,
+  Key,
+  Link,
+  Text,
+  Box,
+} from './Styles'
 
 const RecursiveTree: FC<{ contents: any; branchName: string }> = ({
   contents,
@@ -23,34 +35,28 @@ const RecursiveTree: FC<{ contents: any; branchName: string }> = ({
     if (branchIsArray) {
       return (
         <>
-          <span className="json-mark">[</span>
+          <Mark>[</Mark>
           {branch.map((item: any, index: number) => {
             return (
-              <div
-                style={{
-                  paddingLeft: `25px`,
-                  border: DEBUG ? `1px solid gray` : ``,
-                }}
-                key={dir + index}
-              >
+              <Box border="gray" key={dir + index}>
                 {createTree(item, `${dir}/${index}`)}
-              </div>
+              </Box>
             )
           })}
-          <span className="json-mark">]</span>
+          <Mark>]</Mark>
         </>
       )
     }
 
     // handle other
     if (branch === null) {
-      return <span className="json-null">null</span>
+      return <Null>null</Null>
     }
     if (branch === undefined) {
-      return <span className="json-undefined">undefined</span>
+      return <Undefined>undefined</Undefined>
     }
     if (branch instanceof Date) {
-      return <span className="json-string">{branch.toString()}</span>
+      return <String>{branch.toString()}</String>
     }
 
     // handle object
@@ -63,102 +69,51 @@ const RecursiveTree: FC<{ contents: any; branchName: string }> = ({
       // handle object with nested objects
       return (
         <>
-          <span
-            className="json-mark"
-            style={{ display: `inline-block` }}
-          >{`{`}</span>
+          <Mark style={{ display: `inline-block` }}>{`{`}</Mark>
           {result.map((item, index) => {
             const itemIsObject = typeof item.branch === `object`
             const itemIsArray = Array.isArray(item.branch)
 
             const currentDir = `${dir}/${item.key}`
 
-            // handle item in object with nested objects and open
-            if (
-              (itemIsObject || itemIsArray) &&
-              item.branch &&
-              isOpen[currentDir]
-            ) {
+            // handle item in object with nested objects
+            if ((itemIsObject || itemIsArray) && item.branch) {
               return (
-                <div
-                  style={{
-                    paddingLeft: `25px`,
-                    border: DEBUG ? `1px solid orange` : ``,
-                  }}
-                  key={currentDir + 'open'}
-                >
-                  <span
-                    className="json-key"
+                <Box border="orange" key={currentDir + 'obj/array'}>
+                  <Key
                     title={currentDir}
                     style={{ cursor: `pointer` }}
                     onClick={() =>
                       toggleItemOpen((prev) => ({
                         ...prev,
-                        [currentDir]: false,
+                        [currentDir]: !prev[currentDir],
                       }))
                     }
                   >
-                    <span className="json-mark">
+                    <Mark>
                       {Array.isArray(item.branch)
                         ? `[${item.branch.length}]`
                         : `{${Object.keys(item.branch).length}}`}
                       {` `}
-                    </span>
+                    </Mark>
                     {item.key}
-                    <span className="json-mark">:</span>
-                  </span>
+                    {isOpen[currentDir] && <Mark>:</Mark>}
+                  </Key>
                   <span style={{ paddingLeft: `12px` }}>
-                    {createTree(item.branch, currentDir)}
+                    {isOpen[currentDir] && createTree(item.branch, currentDir)}
                   </span>
-                </div>
-              )
-            }
-
-            // handle item in object with nested objects and closed
-            if (
-              (itemIsObject || itemIsArray) &&
-              item.branch &&
-              !isOpen[currentDir]
-            ) {
-              return (
-                <div
-                  style={{
-                    paddingLeft: `25px`,
-                    border: DEBUG ? `1px solid blue` : ``,
-                  }}
-                  key={currentDir + 'closed'}
-                >
-                  <p
-                    className="json-key"
-                    style={{ cursor: 'pointer' }}
-                    title={currentDir}
-                    onClick={() =>
-                      toggleItemOpen((prev) => ({
-                        ...prev,
-                        [currentDir]: true,
-                      }))
-                    }
-                  >
-                    <span className="json-mark">
-                      {Array.isArray(item.branch)
-                        ? `[${item.branch.length}]`
-                        : `{${Object.keys(item.branch).length}}`}
-                      {` `}
-                    </span>
-                    {item.key}
-                  </p>
-                </div>
+                </Box>
               )
             }
 
             let Inner = <span></span>
             // handle other
             if (item.branch === null) {
-              Inner = <span className={`json-null`}>null</span>
+              Inner = <Null>null</Null>
             } else if (item.branch === undefined) {
-              Inner = <span className="json-undefined">undefined</span>
+              Inner = <Undefined>undefined</Undefined>
             } else if (item.branch instanceof Date) {
-              Inner = <span className="json-string">{branch.toString()}</span>
+              Inner = <String>{branch.toString()}</String>
             } else {
               Inner = (
                 <span className={`json-${typeof item.branch}`}>
@@ -170,26 +125,18 @@ const RecursiveTree: FC<{ contents: any; branchName: string }> = ({
             }
             // handle item in object with no nested objects
             return (
-              <div
-                style={{
-                  paddingLeft: `25px`,
-                  border: DEBUG ? `1px solid green` : ``,
-                }}
-                key={currentDir + 'no-nested'}
-              >
+              <Box border="green" key={currentDir + 'no-nested'}>
                 <p>
-                  <span className="json-key">{item.key}</span>
-                  <span className="json-mark">:</span>
+                  <Key>{item.key}</Key>
+                  <Mark>:</Mark>
                   {` `}
                   {Inner}
-                  <span className="json-mark">
-                    {index !== result.length - 1 && `,`}
-                  </span>
+                  <Mark>{index !== result.length - 1 && `,`}</Mark>
                 </p>
-              </div>
+              </Box>
             )
           })}
-          <span className="json-mark">{`}`}</span>
+          <Mark>{`}`}</Mark>
         </>
       )
     }
@@ -197,15 +144,12 @@ const RecursiveTree: FC<{ contents: any; branchName: string }> = ({
     // non-object, non-array. aka is a "primitive"
     return (
       <span>
-        <span
-          style={{ border: DEBUG ? `1px solid tan` : `` }}
-          className={`json-${typeof branch}`}
-        >
+        <span className={`json-${typeof branch}`}>
           {typeof branch === `string`
             ? `"${branch.toString()}"`
             : branch.toString()}
         </span>
-        {/* <span className="json-mark">{`,`}</span> */}
+        {/* <Mark>{`,`}</Mark> */}
       </span>
     )
   }

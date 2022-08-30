@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react'
+import { FC, Fragment, useEffect } from 'react'
 import React, { useState } from 'react'
 
 import { atom, useRecoilSnapshot, useRecoilState, useRecoilValue } from 'recoil'
@@ -9,6 +9,13 @@ import useSticky from './hooks/useSticky'
 import styled from 'styled-components'
 import { numberToHex } from './DevTools/DebugInspector'
 
+import {
+  devToolsSearchState,
+  devItemIsOpenState,
+} from './DevTools/DebugInspector'
+
+import { searchIsFocusedState } from './DevTools/DevtoolsHeader'
+
 const nullState = atom<Set<string>>({
   key: `nullState`,
   default: new Set(),
@@ -16,6 +23,8 @@ const nullState = atom<Set<string>>({
 
 const App: FC = () => {
   const snapshot = useRecoilSnapshot()
+  const userInput = useRecoilValue(devToolsSearchState)
+  const searchIsFocused = useRecoilValue(searchIsFocusedState)
   const fake = useRecoilValue(fakeState)
   const fake2 = useRecoilValue(fakeState2)
   const [set, setSet] = useRecoilState(nullState)
@@ -23,6 +32,7 @@ const App: FC = () => {
   snapshot.retain()
 
   const list = Array.from(snapshot.getNodes_UNSTABLE())
+
   return (
     <>
       {list.map((item) => {
@@ -31,16 +41,33 @@ const App: FC = () => {
         const { contents } = snapshot.getLoadable(node)
         const data = contents instanceof Set ? Array.from(contents) : contents
 
-        return <StateItem key={node.key} node={node} snapshot={snapshot} />
+        return (
+          <Fragment key={'frag' + node.key}>
+            {node.key.toLowerCase().includes(userInput) && (
+              <StateItem
+                key={'state:' + node.key}
+                node={node}
+                snapshot={snapshot}
+                input={userInput}
+                searchIsFocused={searchIsFocused}
+              />
+            )}
+          </Fragment>
+        )
       })}
     </>
   )
 }
 
-const StateItem: FC<{ snapshot: any; node: any }> = ({ snapshot, node }) => {
+const StateItem: FC<{
+  snapshot: any
+  node: any
+  input: string
+  searchIsFocused: boolean
+}> = ({ snapshot, node, input, searchIsFocused }) => {
   let { contents } = snapshot.getLoadable(node)
-  const [isStuck, ref] = useSticky()
-  const [isOpen, setIsOpen] = useState(false)
+  const [ref, isStuck] = useSticky()
+  const [isOpen, setIsOpen] = useRecoilState(devItemIsOpenState)
 
   const isDate = contents instanceof Date
   const isObject = typeof contents === `object` && contents && !isDate
@@ -53,11 +80,16 @@ const StateItem: FC<{ snapshot: any; node: any }> = ({ snapshot, node }) => {
   }
 
   return (
-    <div style={{ padding: `5px` }}>
+    <div style={{ padding: '5px 5px' }}>
       <ItemHeader
         isStuck={isStuck && isOpen && (isObject || isArray)}
-        className="json-mark test"
-        onClick={() => setIsOpen(!isOpen)}
+        className="json-mark"
+        onClick={() =>
+          setIsOpen((prev) => ({
+            ...prev,
+            [node.key]: !prev[node.key],
+          }))
+        }
         ref={ref}
       >
         <span>
@@ -70,13 +102,21 @@ const StateItem: FC<{ snapshot: any; node: any }> = ({ snapshot, node }) => {
             <span className="json-mark">{`[${contents.length}] `}</span>
           )}
         </span>
-        {node.key}
-        {/* {isOpen && <span className="json-mark">:</span>} */}
+        {node.key.split('').map((key: string, index: number) => {
+          return (
+            <ItemLetter
+              highlight={input.includes(key.toLowerCase())}
+              key={index}
+            >
+              {key}
+            </ItemLetter>
+          )
+        })}
       </ItemHeader>
-      {isOpen && (
+      {isOpen[node.key] && (
         <RecursiveTree
           key={node.key}
-          branchName={node.key}
+          branchName={'branch' + node.key}
           contents={contents}
         />
       )}
@@ -97,4 +137,7 @@ const ItemHeader = styled.span<{ isStuck: boolean }>`
   cursor: pointer;
   background: ${({ isStuck, theme }) =>
     isStuck ? theme.headerBackground + numberToHex(0.5) : `transparent`};
+`
+const ItemLetter = styled.span<{ highlight: boolean }>`
+  color: ${({ highlight, theme }) => (highlight ? theme.boolean : `inherit`)};
 `

@@ -85,7 +85,7 @@ const DevtoolsHeader: FC = () => {
     <Header headerTransparency={headerTransparency}>
       <input
         value={userInput}
-        onChange={(e) => setUserInput(e.target.value)}
+        onChange={(e) => setUserInput(e.target.value.toLowerCase())}
         placeholder="Search"
         onFocus={() => setSearchIsFocused(true)}
         onBlur={() => setSearchIsFocused(false)}
