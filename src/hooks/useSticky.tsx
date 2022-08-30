@@ -11,10 +11,10 @@ export const useSticky = (): [
     const cachedRef = ref.current
     if (cachedRef) {
       const observer = new IntersectionObserver(
-        ([e]) => setIsStuck(e.boundingClientRect.top < 70),
+        ([e]) => setIsStuck(e.boundingClientRect.top < 65),
         {
           threshold: [1],
-          rootMargin: '-70px',
+          rootMargin: `-65px 0px 0px 0px`,
         }
       )
       observer.observe(cachedRef)

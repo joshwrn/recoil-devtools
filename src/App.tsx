@@ -6,6 +6,8 @@ import { fakeState, fakeState2 } from './fakeState'
 
 import RecursiveTree from './recursive_tree'
 import useSticky from './hooks/useSticky'
+import styled from 'styled-components'
+import { numberToHex } from './DevTools/DebugInspector'
 
 const nullState = atom<Set<string>>({
   key: `nullState`,
@@ -50,20 +52,10 @@ const StateItem: FC<{ snapshot: any; node: any }> = ({ snapshot, node }) => {
     contents = Array.from(contents)
   }
 
-  useEffect(() => {
-    console.log(isStuck, node.key)
-  }, [isStuck])
-
   return (
     <div style={{ padding: `5px` }}>
-      <span
-        style={{
-          position: 'sticky',
-          top: 0,
-          backdropFilter: `blur(10px)`,
-          cursor: 'pointer',
-          border: isStuck ? `1px solid blue` : `1px solid transparent`,
-        }}
+      <ItemHeader
+        isStuck={isStuck && isOpen && (isObject || isArray)}
         className="json-mark test"
         onClick={() => setIsOpen(!isOpen)}
         ref={ref}
@@ -79,8 +71,8 @@ const StateItem: FC<{ snapshot: any; node: any }> = ({ snapshot, node }) => {
           )}
         </span>
         {node.key}
-        {isOpen && <span className="json-mark">:</span>}
-      </span>
+        {/* {isOpen && <span className="json-mark">:</span>} */}
+      </ItemHeader>
       {isOpen && (
         <RecursiveTree
           key={node.key}
@@ -93,3 +85,16 @@ const StateItem: FC<{ snapshot: any; node: any }> = ({ snapshot, node }) => {
 }
 
 export default App
+
+const ItemHeader = styled.span<{ isStuck: boolean }>`
+  display: inline-block;
+  width: ${({ isStuck }) => (isStuck ? `calc(100% + 15px)` : `auto`)};
+  transform: ${({ isStuck }) => (isStuck ? `translateX(-10px)` : `none`)};
+  padding: ${({ isStuck }) => (isStuck ? `0 15px` : `0`)};
+  position: sticky;
+  top: 0;
+  backdrop-filter: ${({ isStuck }) => (isStuck ? `blur(30px)` : `none`)};
+  cursor: pointer;
+  background: ${({ isStuck, theme }) =>
+    isStuck ? theme.headerBackground + numberToHex(0.5) : `transparent`};
+`

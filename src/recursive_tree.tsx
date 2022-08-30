@@ -3,21 +3,12 @@ import React, { Fragment, useState } from 'react'
 
 import { atom, useRecoilState } from 'recoil'
 import styled from 'styled-components'
-
-export interface RecursiveTreeProps {
-  readonly listMeta: any
-}
+import {
+  devItemIsOpenState,
+  localStorageEffect,
+} from './DevTools/DebugInspector'
 
 const DEBUG = false
-
-interface Storage {
-  [key: string]: boolean
-}
-
-const devItemIsOpenState = atom<Storage>({
-  key: `devItemIsOpenState`,
-  default: {},
-})
 
 const RecursiveTree: FC<{ contents: any; branchName: string }> = ({
   contents,
@@ -98,6 +89,7 @@ const RecursiveTree: FC<{ contents: any; branchName: string }> = ({
                 >
                   <span
                     className="json-key"
+                    title={currentDir}
                     style={{ cursor: `pointer` }}
                     onClick={() =>
                       toggleItemOpen((prev) => ({
@@ -139,6 +131,7 @@ const RecursiveTree: FC<{ contents: any; branchName: string }> = ({
                   <p
                     className="json-key"
                     style={{ cursor: 'pointer' }}
+                    title={currentDir}
                     onClick={() =>
                       toggleItemOpen((prev) => ({
                         ...prev,

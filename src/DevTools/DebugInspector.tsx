@@ -58,6 +58,7 @@ const Inner = styled.div<{ height: number; position: string }>`
   height: ${({ height, position }) =>
     position === `bottom` ? `${height}px` : `100vh`};
   padding-top: 60px;
+  padding-left: 5px;
   top: 0;
 `
 
@@ -105,15 +106,15 @@ export const devToolsSearchState = atom({
   effects: [localStorageEffect(`devToolsSearchState`)],
 })
 
+export const devItemIsOpenState = atom<Storage>({
+  key: `devItemIsOpenState`,
+  default: {},
+  effects: [localStorageEffect(`devItemIsOpenState`)],
+})
+
 interface Storage {
   [key: string]: boolean
 }
-
-export const recoilDevToolsOpenItemsState = atom<Storage>({
-  key: `recoilDevToolsOpenItemsState`,
-  default: {},
-  effects: [localStorageEffect(`devToolsOpenItemsStateStorage`)],
-})
 
 const Tools: FC = () => {
   const settingsOpen = useRecoilValue(recoilDevToolSettingsOpenState)
