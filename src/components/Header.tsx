@@ -1,7 +1,7 @@
 import type { FC } from 'react'
 
-// import { ReactComponent as CloseIcon } from '@svg/close.svg'
-// import { ReactComponent as Gear } from '@svg/gear.svg'
+import { ReactComponent as CloseIcon } from '../assets/close.svg'
+import { ReactComponent as Gear } from '../assets/gear.svg'
 import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import styled from 'styled-components'
 import {
@@ -60,9 +60,6 @@ const Header = styled.div<{ headerTransparency: number; fontSize: number }>`
     :hover {
       background-color: ${({ theme }) => theme.iconBackground}e6;
     }
-    .recoilCloseIcon {
-      width: 13px;
-    }
     path {
       stroke: ${({ theme }) => theme.faintText};
     }
@@ -94,10 +91,10 @@ const DevtoolsHeader: FC = () => {
         title="Settings"
         onClick={() => setSettingsOpen((prev: boolean) => !prev)}
       >
-        {/* <Gear /> */}
+        <Gear />
       </div>
       <div title="Close" onClick={() => setIsOpen(false)}>
-        {/* <CloseIcon className="recoilCloseIcon" /> */}
+        <CloseIcon width={14} height={14} />
       </div>
     </Header>
   )

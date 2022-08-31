@@ -1,6 +1,6 @@
 import type { FC } from 'react'
 
-// import { ReactComponent as BackArrow } from '@svg/tools/back-arrow.svg'
+import { ReactComponent as BackArrow } from '../assets/back-arrow.svg'
 import { atom, useRecoilState, useSetRecoilState } from 'recoil'
 import styled from 'styled-components'
 import { recoilDevToolsSettingsState } from '../state/storage'
@@ -12,6 +12,7 @@ import { HANDLE_SIZE } from './ResizableContainer'
 const Container = styled.div<{
   height: number
   position: string
+  fontSize: number
 }>`
   display: flex;
   flex-direction: column;
@@ -41,8 +42,8 @@ const Container = styled.div<{
       color: ${({ theme }) => theme.faintText};
     }
     svg {
-      width: 20px;
-      height: 20px;
+      width: ${({ fontSize }) => fontSize}px;
+      height: ${({ fontSize }) => fontSize}px;
     }
     path {
       fill: ${({ theme }) => theme.faintText};
@@ -137,10 +138,10 @@ const SettingsPage: FC = () => {
 
   const setOpen = useSetRecoilState(recoilDevToolSettingsOpenState)
   return (
-    <Container height={height} position={position}>
+    <Container height={height} position={position} fontSize={fontSize}>
       <div className="devSettingsTop">
         <div onClick={() => setOpen(false)}>
-          {/* <BackArrow />  */}
+          <BackArrow />
           <p>Back</p>
         </div>
       </div>
