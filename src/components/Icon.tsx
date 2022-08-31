@@ -1,11 +1,10 @@
-/// <reference types="vite-plugin-svgr/client" />
-import type { FC } from 'react'
+import type { FC } from "react"
 
-import { useRecoilState } from 'recoil'
-import styled from 'styled-components'
+import { useRecoilState } from "recoil"
+import styled from "styled-components"
 
-import { ReactComponent as Logo } from '../assets/recoil-logo.svg'
-import { devToolsOpenState } from '../state/storage'
+import { devToolsOpenState } from "../state/storage"
+import { Logo } from "./Logo"
 
 const RecoilIcon = styled.button<{
   toolsAreOpen: boolean

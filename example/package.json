@@ -1,0 +1,19 @@
+{
+  "name": "@eyecuelab/recoil-devtools-example",
+  "scripts": {
+    "dev": "vite"
+  },
+  "dependencies": {
+    "framer-motion": "^7.2.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-portal": "^4.2.2",
+    "recoil": "^0.7.5",
+    "styled-components": "^5.3.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^2.0.1",
+    "vite": "^3.0.7",
+    "vite-tsconfig-paths": "^3.5.0"
+  }
+}

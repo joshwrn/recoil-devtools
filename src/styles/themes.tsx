@@ -16,7 +16,7 @@ interface Theme {
 }
 
 export const devThemes: Record<string, Theme> = {
-  Light: {
+  "Light": {
     key: `blue`,
     string: `#333`,
     number: `blue`,
@@ -32,7 +32,7 @@ export const devThemes: Record<string, Theme> = {
     background: `#ffffff`,
     iconBackground: `#dbdbdb`,
   },
-  Dark: {
+  "Dark": {
     key: `indianred`,
     string: `darkkhaki`,
     number: `deepskyblue`,
@@ -48,7 +48,7 @@ export const devThemes: Record<string, Theme> = {
     background: `#1b1b1b`,
     iconBackground: `#000000`,
   },
-  'Github Light': {
+  "Github Light": {
     key: `#d73a49`,
     string: `#6f42c1`,
     number: `#005cc5`,
@@ -64,7 +64,7 @@ export const devThemes: Record<string, Theme> = {
     background: `#ffffff`,
     iconBackground: `#e7e7e7`,
   },
-  'Github Dark': {
+  "Github Dark": {
     key: `#d2a8ff`,
     string: `#70c6f0`,
     number: `#ff7b72`,
@@ -81,7 +81,7 @@ export const devThemes: Record<string, Theme> = {
     iconBackground: `#30363d`,
   },
 
-  'Tokyo Nights': {
+  "Tokyo Nights": {
     key: `#f7768e`,
     string: `#9ece6a`,
     number: `#ff9e64`,
@@ -97,7 +97,7 @@ export const devThemes: Record<string, Theme> = {
     background: `#1a1b26`,
     iconBackground: `#13141d`,
   },
-  Gruvbox: {
+  "Gruvbox": {
     key: `#fb4934`,
     string: `#b8bb26`,
     number: `#fabd2f`,
@@ -113,7 +113,7 @@ export const devThemes: Record<string, Theme> = {
     background: `#282828`,
     iconBackground: `#1d1d1d`,
   },
-  Dracula: {
+  "Dracula": {
     key: `#ff79c6`,
     string: `#50fa7b`,
     number: `#f1fa8c`,
@@ -129,7 +129,7 @@ export const devThemes: Record<string, Theme> = {
     background: `#282a36`,
     iconBackground: `#1d1e25`,
   },
-  Nord: {
+  "Nord": {
     key: `#bf616a`,
     string: `#a3be8c`,
     number: `#ebcb8b`,
@@ -145,7 +145,7 @@ export const devThemes: Record<string, Theme> = {
     background: `#2e3440`,
     iconBackground: `#3b4252`,
   },
-  'Solarized Light': {
+  "Solarized Light": {
     key: `#dc322f`,
     string: `#2aa198`,
     number: `#b58900`,
@@ -161,7 +161,7 @@ export const devThemes: Record<string, Theme> = {
     background: `#fdf6e3`,
     iconBackground: `#eee8d5`,
   },
-  'Solarized Dark': {
+  "Solarized Dark": {
     key: `#dc322f`,
     string: `#2aa198`,
     number: `#b58900`,

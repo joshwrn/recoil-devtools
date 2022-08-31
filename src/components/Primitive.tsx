@@ -1,14 +1,8 @@
-import { FC } from 'react'
-import {
-  Null,
-  Undefined,
-  String,
-  Number,
-  Boolean,
-  Text,
-} from '../styles/Styles'
+import type { FC } from "react"
 
-const Primitive: FC<{ data: any }> = ({ data }) => {
+import { Null, Undefined, String, Number, Boolean, Text } from "../styles/Styles"
+
+const Primitive: FC<{ data: unknown }> = ({ data }) => {
   if (data === null) {
     return <Null>null</Null>
   }
@@ -18,14 +12,14 @@ const Primitive: FC<{ data: any }> = ({ data }) => {
   if (data instanceof Date) {
     return <String>{data.toString()}</String>
   }
-  if (typeof data === 'string') {
-    return <String>"{data}"</String>
+  if (typeof data === `string`) {
+    return <String>{`"${data}"`}</String>
   }
-  if (typeof data === 'number') {
+  if (typeof data === `number`) {
     return <Number>{data}</Number>
   }
-  if (typeof data === 'boolean') {
-    return <Boolean>{data ? 'true' : 'false'}</Boolean>
+  if (typeof data === `boolean`) {
+    return <Boolean>{data ? `true` : `false`}</Boolean>
   }
   return <Text>unknown</Text>
 }

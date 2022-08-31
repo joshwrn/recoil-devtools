@@ -1,42 +1,33 @@
-import { FC, Fragment, useEffect, useRef } from 'react'
+import type { FC } from "react"
+import { Fragment, useEffect, useRef } from "react"
 
+import { AnimatePresence, motion } from "framer-motion"
+import type { RecoilValue, Snapshot } from "recoil"
 import {
   atom,
   useRecoilSnapshot,
   useRecoilState,
   useRecoilValue,
   useSetRecoilState,
-} from 'recoil'
-import { fakeState, fakeState2, fakeState3 } from '../fakeState'
+} from "recoil"
+import styled from "styled-components"
 
-import RecursiveTree from './RecursiveTree'
-import useSticky from '../hooks/useSticky'
-import styled from 'styled-components'
-
-import { searchIsFocusedState } from './Header'
-import { numberToHex } from '../utils/color'
+import useSticky from "../hooks/useSticky"
 import {
   devItemIsOpenState,
   devToolsSearchState,
   recoilDevToolsSettingsState,
-} from '../state/storage'
-import Badge from './Badge'
-import { Mark } from '../styles/Styles'
-import { AnimatePresence, motion } from 'framer-motion'
-
-const nullState = atom<Set<string>>({
-  key: `nullState`,
-  default: new Set([]),
-})
+} from "../state/storage"
+import { Mark } from "../styles/Styles"
+import { numberToHex } from "../utils/color"
+import Badge from "./Badge"
+import { searchIsFocusedState } from "./Header"
+import RecursiveTree from "./RecursiveTree"
 
 const List: FC = () => {
   const snapshot = useRecoilSnapshot()
   const userInput = useRecoilValue(devToolsSearchState)
   const searchIsFocused = useRecoilValue(searchIsFocusedState)
-  const fake = useRecoilValue(fakeState)
-  const fake2 = useRecoilValue(fakeState2)
-  const fake3 = useRecoilValue(fakeState3)
-  const [set, setSet] = useRecoilState(nullState)
 
   snapshot.retain()
 
@@ -47,10 +38,10 @@ const List: FC = () => {
       {list.map((item) => {
         const node = item
         return (
-          <Fragment key={'frag' + node.key}>
+          <Fragment key={`frag` + node.key}>
             {node.key.toLowerCase().includes(userInput) && (
               <StateItem
-                key={'state:' + node.key}
+                key={`state:` + node.key}
                 node={node}
                 snapshot={snapshot}
                 input={userInput}
@@ -65,8 +56,8 @@ const List: FC = () => {
 }
 
 const StateItem: FC<{
-  snapshot: any
-  node: any
+  snapshot: Snapshot
+  node: RecoilValue<unknown>
   input: string
   searchIsFocused: boolean
 }> = ({ snapshot, node, input, searchIsFocused }) => {
@@ -87,24 +78,25 @@ const StateItem: FC<{
 
   let length = 0
   if (Array.isArray(contents)) length = contents.length
-  if (typeof contents === `object` && contents)
+  if (typeof contents === `object` && contents) {
     length = Object.keys(contents).length
+  }
 
   const wordStart = node.key.toLowerCase().indexOf(input)
 
   return (
     <>
-      <div style={{ padding: '5px 5px' }}>
+      <div style={{ padding: `5px 5px` }}>
         <div
           style={{
-            width: '100px',
-            height: '1px',
-            position: 'sticky',
-            top: '-1px',
+            width: `100px`,
+            height: `1px`,
+            position: `sticky`,
+            top: `-1px`,
           }}
           ref={ref}
         />
-        <AnimatePresence>
+        {/* <AnimatePresence>
           {isStuck && isOpen[node.key] && (
             <Sticky
               initial={{ opacity: 0 }}
@@ -114,7 +106,7 @@ const StateItem: FC<{
               {type}
             </Sticky>
           )}
-        </AnimatePresence>
+        </AnimatePresence> */}
         <ItemHeader
           isStuck={isStuck && isOpen[node.key] && (isObject || isArray)}
           onClick={() =>
@@ -128,7 +120,7 @@ const StateItem: FC<{
             <span title={type}>
               <Badge length={length} />
               <span>
-                {node.key.split('').map((key: string, index: number) => {
+                {node.key.split(``).map((key: string, index: number) => {
                   return (
                     <ItemLetter
                       highlight={
@@ -149,7 +141,7 @@ const StateItem: FC<{
         {isOpen[node.key] && (
           <RecursiveTree
             key={node.key}
-            branchName={'branch' + node.key}
+            branchName={`branch` + node.key}
             contents={contents}
           />
         )}
@@ -162,7 +154,7 @@ export default List
 
 const ItemHeader = styled.span<{ isStuck: boolean }>`
   display: inline-block;
-  transform: ${({ isStuck }) => (isStuck ? `translateY(5px)` : `none`)};
+  /* transform: ${({ isStuck }) => (isStuck ? `translateY(5px)` : `none`)}; */
   position: sticky;
   backdrop-filter: blur(10px);
   top: 0;

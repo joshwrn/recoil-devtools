@@ -1,12 +1,11 @@
-import type { FC } from 'react'
+import type { FC } from "react"
 
-import { ReactComponent as BackArrow } from '../assets/back-arrow.svg'
-import { atom, useRecoilState, useSetRecoilState } from 'recoil'
-import styled from 'styled-components'
-import { recoilDevToolsSettingsState } from '../state/storage'
+import { atom, useRecoilState, useSetRecoilState } from "recoil"
+import styled from "styled-components"
 
-import { devThemes } from '../styles/themes'
-import { HANDLE_SIZE } from './ResizableContainer'
+import { recoilDevToolsSettingsState } from "../state/storage"
+import { devThemes } from "../styles/themes"
+import { HANDLE_SIZE } from "./ResizableContainer"
 /* eslint-disable max-lines */
 
 const Container = styled.div<{
@@ -76,7 +75,7 @@ const Option = styled.div`
     min-width: 135px;
     background: none;
   }
-  input[type='range'] {
+  input[type="range"] {
     cursor: pointer;
     -webkit-appearance: none;
     border-radius: 20px;
@@ -102,8 +101,8 @@ const Option = styled.div`
       }
     }
   }
-  input[type='text'],
-  input[type='number'] {
+  input[type="text"],
+  input[type="number"] {
     padding-left: 5px;
     color: ${({ theme }) => theme.faintText};
     font-weight: 600;
@@ -141,7 +140,6 @@ const SettingsPage: FC = () => {
     <Container height={height} position={position} fontSize={fontSize}>
       <div className="devSettingsTop">
         <div onClick={() => setOpen(false)}>
-          <BackArrow />
           <p>Back</p>
         </div>
       </div>

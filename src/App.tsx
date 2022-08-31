@@ -1,20 +1,22 @@
-import type { FC } from 'react'
+import type { FC } from "react"
 
-import { useRecoilValue } from 'recoil'
-import styled, { ThemeProvider } from 'styled-components'
-import { Portal } from 'react-portal'
+import { Portal } from "react-portal"
+import { useRecoilValue } from "recoil"
+import styled, { ThemeProvider } from "styled-components"
 
-import { devThemes } from './styles/themes'
-import DevtoolsHeader from './components/Header'
-import DevToolsIcon from './components/Icon'
-import ResizableContainer from './components/ResizableContainer'
+import DevtoolsHeader from "./components/Header"
+import DevToolsIcon from "./components/Icon"
+import List from "./components/List"
+import ResizableContainer from "./components/ResizableContainer"
 import SettingsPage, {
   recoilDevToolSettingsOpenState,
-} from './components/Settings'
-import { numberToHex } from './utils/color'
-import { devToolsOpenState, recoilDevToolsSettingsState } from './state/storage'
-import { globalStyle } from './styles/globalStyle'
-import List from './components/List'
+} from "./components/Settings"
+import { devToolsOpenState, recoilDevToolsSettingsState } from "./state/storage"
+import { globalStyle } from "./styles/globalStyle"
+import { devThemes } from "./styles/themes"
+import { numberToHex } from "./utils/color"
+
+import "./font-face.css"
 
 const Tools: FC = () => {
   const settingsOpen = useRecoilValue(recoilDevToolSettingsOpenState)
@@ -82,9 +84,13 @@ const Layer = styled.div<{ fonts: string; fontSize: number }>`
   ${globalStyle}
   * {
     font-family: ${({ fonts }) => (fonts.length > 0 ? fonts + `,` : ``)}
-        'Jetbrains Mono',
-      'Dank Mono', 'Courier New', Courier, monospace !important;
+        "Jetbrains Mono",
+      "Dank Mono", "Courier New", Courier, monospace !important;
     font-size: ${({ fontSize }) => fontSize}px;
+    i {
+      font-family: Icon !important;
+      font-variation-settings: "wght" 250;
+    }
   }
   .devtools-badge {
     display: inline-block;
@@ -104,7 +110,7 @@ const Inner = styled.div<{ height: number; width: number; position: string }>`
   overflow-y: overlay;
   overflow-x: overlay;
   width: 100%;
-  width: ${({ width, position }) => (position === `bottom` ? '100%' : width)}px;
+  width: ${({ width, position }) => (position === `bottom` ? `100%` : width)}px;
   position: relative;
   height: ${({ height, position }) =>
     position === `bottom` ? `${height}px` : `100vh`};
