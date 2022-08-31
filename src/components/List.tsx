@@ -181,6 +181,7 @@ const Sticky = styled(motion.div)`
   backdrop-filter: blur(5px);
   width: inherit;
   height: 30px;
+
   background: ${({ theme }) => theme.headerBackground + numberToHex(0.5)};
   border-bottom: ${({ theme }) =>
     `1px solid ${theme.faintOutline + numberToHex(0.7)}`};

@@ -90,6 +90,8 @@ const Layer = styled.div<{ fonts: string; fontSize: number }>`
     display: inline-block;
     transform: translateY(-1px);
     margin-right: 5px;
+    z-index: -1;
+    position: relative;
     font-size: ${({ fontSize }) => fontSize / 2 + 2}px;
   }
   display: flex;
