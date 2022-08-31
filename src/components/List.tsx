@@ -29,30 +29,6 @@ const nullState = atom<Set<string>>({
   default: new Set([]),
 })
 
-const stickyState = atom<null | string>({
-  key: `stickyState`,
-  default: null,
-})
-
-const Sticky = styled(motion.div)<{ width: number }>`
-  position: fixed;
-  display: flex;
-  align-items: center;
-  color: ${({ theme }) => theme.primaryText};
-  top: 60px;
-  right: 0;
-  justify-content: flex-end;
-  padding: 0 10px;
-  backdrop-filter: blur(5px);
-  width: ${({ width }) => width - 1}px;
-  height: 30px;
-  background: ${({ theme }) => theme.headerBackground + numberToHex(0.5)};
-  border-bottom: ${({ theme }) =>
-    `1px solid ${theme.faintOutline + numberToHex(0.7)}`};
-  border-top: ${({ theme }) =>
-    `1px solid ${theme.faintOutline + numberToHex(0.7)}`};
-`
-
 const List: FC = () => {
   const snapshot = useRecoilSnapshot()
   const userInput = useRecoilValue(devToolsSearchState)
@@ -60,8 +36,6 @@ const List: FC = () => {
   const fake = useRecoilValue(fakeState)
   const fake2 = useRecoilValue(fakeState2)
   const [set, setSet] = useRecoilState(nullState)
-  const sticky = useRecoilValue(stickyState)
-  const { width, position } = useRecoilValue(recoilDevToolsSettingsState)
 
   snapshot.retain()
 
@@ -69,18 +43,6 @@ const List: FC = () => {
 
   return (
     <>
-      <AnimatePresence>
-        {sticky && (
-          <Sticky
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            width={width}
-          >
-            {sticky}
-          </Sticky>
-        )}
-      </AnimatePresence>
       {list.map((item) => {
         const node = item
         return (
@@ -111,15 +73,6 @@ const StateItem: FC<{
   const type = Object.prototype.toString.call(contents).slice(8, -1)
   const [ref, isStuck] = useSticky()
   const [isOpen, setIsOpen] = useRecoilState(devItemIsOpenState)
-  const setSticky = useSetRecoilState(stickyState)
-
-  useEffect(() => {
-    if (isStuck && isOpen[node.key]) {
-      setSticky(type)
-    } else {
-      setSticky(null)
-    }
-  }, [isStuck])
 
   const isDate = contents instanceof Date
   const isObject = typeof contents === `object` && contents && !isDate
@@ -136,46 +89,63 @@ const StateItem: FC<{
   if (typeof contents === `object` && contents)
     length = Object.keys(contents).length
 
+  const wordStart = node.key.toLowerCase().indexOf(input)
+
   return (
-    <div style={{ padding: '5px 5px' }}>
-      <ItemHeader
-        isStuck={isStuck && isOpen[node.key] && (isObject || isArray)}
-        onClick={() =>
-          setIsOpen((prev) => ({
-            ...prev,
-            [node.key]: !prev[node.key],
-          }))
-        }
-        ref={ref}
-      >
-        <InnerHeader>
-          <span title={type}>
-            <Badge length={length} />
-            <span>
-              {node.key.split('').map((key: string, index: number) => {
-                return (
-                  <ItemLetter
-                    highlight={
-                      input.includes(key.toLowerCase()) && searchIsFocused
-                    }
-                    key={index}
-                  >
-                    {key}
-                  </ItemLetter>
-                )
-              })}
+    <>
+      <AnimatePresence>
+        {isStuck && isOpen[node.key] && (
+          <Sticky
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+          >
+            {type}
+          </Sticky>
+        )}
+      </AnimatePresence>
+      <div style={{ padding: '5px 5px' }}>
+        <ItemHeader
+          isStuck={isStuck && isOpen[node.key] && (isObject || isArray)}
+          onClick={() =>
+            setIsOpen((prev) => ({
+              ...prev,
+              [node.key]: !prev[node.key],
+            }))
+          }
+          ref={ref}
+        >
+          <InnerHeader>
+            <span title={type}>
+              <Badge length={length} />
+              <span>
+                {node.key.split('').map((key: string, index: number) => {
+                  return (
+                    <ItemLetter
+                      highlight={
+                        index >= wordStart &&
+                        index <= wordStart + input.length - 1 &&
+                        searchIsFocused
+                      }
+                      key={index}
+                    >
+                      {key}
+                    </ItemLetter>
+                  )
+                })}
+              </span>
             </span>
-          </span>
-        </InnerHeader>
-      </ItemHeader>
-      {isOpen[node.key] && (
-        <RecursiveTree
-          key={node.key}
-          branchName={'branch' + node.key}
-          contents={contents}
-        />
-      )}
-    </div>
+          </InnerHeader>
+        </ItemHeader>
+        {isOpen[node.key] && (
+          <RecursiveTree
+            key={node.key}
+            branchName={'branch' + node.key}
+            contents={contents}
+          />
+        )}
+      </div>
+    </>
   )
 }
 
@@ -198,4 +168,22 @@ const InnerHeader = styled.div`
 const ItemLetter = styled.span<{ highlight: boolean }>`
   color: ${({ highlight, theme }) =>
     highlight ? theme.boolean : theme.primaryText};
+`
+const Sticky = styled(motion.div)`
+  position: fixed;
+  display: flex;
+  align-items: center;
+  color: ${({ theme }) => theme.primaryText};
+  top: 60px;
+  right: 0;
+  justify-content: flex-end;
+  padding: 0 15px;
+  backdrop-filter: blur(5px);
+  width: inherit;
+  height: 30px;
+  background: ${({ theme }) => theme.headerBackground + numberToHex(0.5)};
+  border-bottom: ${({ theme }) =>
+    `1px solid ${theme.faintOutline + numberToHex(0.7)}`};
+  border-top: ${({ theme }) =>
+    `1px solid ${theme.faintOutline + numberToHex(0.7)}`};
 `

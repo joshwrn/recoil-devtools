@@ -18,8 +18,16 @@ import List from './components/List'
 
 const Tools: FC = () => {
   const settingsOpen = useRecoilValue(recoilDevToolSettingsOpenState)
-  const { theme, transparency, position, height, vibrancy, fonts, fontSize } =
-    useRecoilValue(recoilDevToolsSettingsState)
+  const {
+    theme,
+    transparency,
+    position,
+    height,
+    width,
+    vibrancy,
+    fonts,
+    fontSize,
+  } = useRecoilValue(recoilDevToolsSettingsState)
 
   return (
     <ThemeProvider theme={devThemes[theme] ?? devThemes[`Light`]}>
@@ -29,7 +37,7 @@ const Tools: FC = () => {
           {!settingsOpen && (
             <>
               <DevtoolsHeader />
-              <Inner height={height} position={position}>
+              <Inner width={width} height={height} position={position}>
                 <List />
               </Inner>
             </>
@@ -90,10 +98,11 @@ const Layer = styled.div<{ fonts: string; fontSize: number }>`
   z-index: 20001;
   width: 100%;
 `
-const Inner = styled.div<{ height: number; position: string }>`
+const Inner = styled.div<{ height: number; width: number; position: string }>`
   overflow-y: overlay;
   overflow-x: overlay;
   width: 100%;
+  width: ${({ width, position }) => (position === `bottom` ? '100%' : width)}px;
   position: relative;
   height: ${({ height, position }) =>
     position === `bottom` ? `${height}px` : `100vh`};
