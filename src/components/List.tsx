@@ -1,4 +1,4 @@
-import { FC, Fragment, useEffect } from 'react'
+import { FC, Fragment, useEffect, useRef } from 'react'
 
 import {
   atom,
@@ -7,7 +7,7 @@ import {
   useRecoilValue,
   useSetRecoilState,
 } from 'recoil'
-import { fakeState, fakeState2 } from '../fakeState'
+import { fakeState, fakeState2, fakeState3 } from '../fakeState'
 
 import RecursiveTree from './RecursiveTree'
 import useSticky from '../hooks/useSticky'
@@ -35,6 +35,7 @@ const List: FC = () => {
   const searchIsFocused = useRecoilValue(searchIsFocusedState)
   const fake = useRecoilValue(fakeState)
   const fake2 = useRecoilValue(fakeState2)
+  const fake3 = useRecoilValue(fakeState3)
   const [set, setSet] = useRecoilState(nullState)
 
   snapshot.retain()
@@ -93,18 +94,27 @@ const StateItem: FC<{
 
   return (
     <>
-      <AnimatePresence>
-        {isStuck && isOpen[node.key] && (
-          <Sticky
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-          >
-            {type}
-          </Sticky>
-        )}
-      </AnimatePresence>
       <div style={{ padding: '5px 5px' }}>
+        <div
+          style={{
+            width: '100px',
+            height: '1px',
+            position: 'sticky',
+            top: '-1px',
+          }}
+          ref={ref}
+        />
+        <AnimatePresence>
+          {isStuck && isOpen[node.key] && (
+            <Sticky
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              {type}
+            </Sticky>
+          )}
+        </AnimatePresence>
         <ItemHeader
           isStuck={isStuck && isOpen[node.key] && (isObject || isArray)}
           onClick={() =>
@@ -113,7 +123,6 @@ const StateItem: FC<{
               [node.key]: !prev[node.key],
             }))
           }
-          ref={ref}
         >
           <InnerHeader>
             <span title={type}>
@@ -155,6 +164,7 @@ const ItemHeader = styled.span<{ isStuck: boolean }>`
   display: inline-block;
   transform: ${({ isStuck }) => (isStuck ? `translateY(5px)` : `none`)};
   position: sticky;
+  backdrop-filter: blur(10px);
   top: 0;
   z-index: 1;
   cursor: pointer;
@@ -170,18 +180,19 @@ const ItemLetter = styled.span<{ highlight: boolean }>`
     highlight ? theme.boolean : theme.primaryText};
 `
 const Sticky = styled(motion.div)`
-  position: fixed;
+  position: sticky;
   display: flex;
   align-items: center;
   color: ${({ theme }) => theme.primaryText};
-  top: 60px;
-  right: 0;
+  top: 0px;
   justify-content: flex-end;
-  padding: 0 15px;
+  padding-right: 15px;
   backdrop-filter: blur(5px);
-  width: inherit;
+  backface-visibility: hidden;
+  transform: translateZ(0) scale(1, 1);
+  width: calc(100% + 20px);
+  transform: translateX(-15px);
   height: 30px;
-
   background: ${({ theme }) => theme.headerBackground + numberToHex(0.5)};
   border-bottom: ${({ theme }) =>
     `1px solid ${theme.faintOutline + numberToHex(0.7)}`};

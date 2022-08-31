@@ -111,4 +111,7 @@ const Inner = styled.div<{ height: number; width: number; position: string }>`
   padding-top: 60px;
   padding-left: 5px;
   top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
 `
