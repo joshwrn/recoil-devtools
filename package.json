@@ -1,5 +1,9 @@
 {
   "name": "@eyecuelab/recoil-devtools",
+  "authors": [
+    "joshwrn",
+    "jeremybanka"
+  ],
   "version": "0.0.0",
   "private": false,
   "type": "module",
