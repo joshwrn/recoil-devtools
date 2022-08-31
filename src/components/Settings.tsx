@@ -3,8 +3,8 @@ import type { FC } from 'react'
 // import { ReactComponent as BackArrow } from '@svg/tools/back-arrow.svg'
 import { atom, useRecoilState, useSetRecoilState } from 'recoil'
 import styled from 'styled-components'
+import { recoilDevToolsSettingsState } from '../state/storage'
 
-import { recoilDevToolsSettingsState } from '../App'
 import { devThemes } from '../styles/themes'
 import { HANDLE_SIZE } from './ResizableContainer'
 /* eslint-disable max-lines */
@@ -78,7 +78,6 @@ const Option = styled.div`
   }
   input[type='range'] {
     cursor: pointer;
-    margin-bottom: 20px;
     -webkit-appearance: none;
     border-radius: 20px;
     background: ${({ theme }) => theme.faintOutline};
@@ -124,7 +123,6 @@ export interface DevToolSettings {
   vibrancy: number
   fonts: string
   fontSize: number
-  itemSpacing: number
 }
 
 export const recoilDevToolSettingsOpenState = atom({
@@ -134,16 +132,7 @@ export const recoilDevToolSettingsOpenState = atom({
 
 const SettingsPage: FC = () => {
   const [
-    {
-      position,
-      theme,
-      transparency,
-      vibrancy,
-      fonts,
-      fontSize,
-      itemSpacing,
-      height,
-    },
+    { position, theme, transparency, vibrancy, fonts, fontSize, height },
     setSettings,
   ] = useRecoilState(recoilDevToolsSettingsState)
 
@@ -209,28 +198,12 @@ const SettingsPage: FC = () => {
         <input
           value={fontSize}
           type="number"
-          min={7}
-          max={24}
+          min={10}
+          max={20}
           onChange={(e) =>
             setSettings((prev: DevToolSettings) => ({
               ...prev,
               fontSize: Number(e.target.value),
-            }))
-          }
-        />
-      </Option>
-      <Option>
-        <label>Item Spacing</label>
-        <input
-          value={itemSpacing}
-          type="range"
-          min={0}
-          max={10}
-          step={1}
-          onChange={(e) =>
-            setSettings((prev: DevToolSettings) => ({
-              ...prev,
-              itemSpacing: Number(e.target.value),
             }))
           }
         />

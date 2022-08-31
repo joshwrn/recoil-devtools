@@ -5,8 +5,7 @@ import type { PanInfo } from 'framer-motion'
 import { motion, useMotionValue } from 'framer-motion'
 import { useRecoilState } from 'recoil'
 import styled, { css } from 'styled-components'
-
-import { recoilDevToolsSettingsState } from '../App'
+import { recoilDevToolsSettingsState } from '../state/storage'
 
 export const HANDLE_SIZE = 10
 

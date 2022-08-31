@@ -1,5 +1,3 @@
-import { css } from 'styled-components'
-
 interface Theme {
   key: string
   string: string
@@ -180,45 +178,3 @@ export const devThemes: Record<string, Theme> = {
     iconBackground: `#073642`,
   },
 }
-
-export const JsonColors = css`
-  ::-webkit-scrollbar {
-    width: 8px;
-    height: 0;
-  }
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: ${({ theme }) => theme.faintOutline};
-    border-radius: 10px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: ${({ theme }) => theme.faintText};
-  }
-  ::-webkit-scrollbar-corner {
-    background: ${({ theme }) => theme.background};
-  }
-
-  .json-key {
-    color: ${({ theme }) => theme.key};
-  }
-  .json-string {
-    color: ${({ theme }) => theme.string};
-  }
-  .json-number {
-    color: ${({ theme }) => theme.number};
-  }
-  .json-boolean {
-    color: ${({ theme }) => theme.boolean};
-  }
-  .json-null {
-    color: ${({ theme }) => theme.null};
-  }
-  .json-mark {
-    color: ${({ theme }) => theme.mark};
-  }
-  .json-link {
-    color: ${({ theme }) => theme.link};
-  }
-`

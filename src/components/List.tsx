@@ -1,5 +1,4 @@
-import { FC, Fragment, useEffect } from 'react'
-import React, { useState } from 'react'
+import { FC, Fragment } from 'react'
 
 import { atom, useRecoilSnapshot, useRecoilState, useRecoilValue } from 'recoil'
 import { fakeState, fakeState2 } from '../fakeState'
@@ -7,11 +6,11 @@ import { fakeState, fakeState2 } from '../fakeState'
 import RecursiveTree from './RecursiveTree'
 import useSticky from '../hooks/useSticky'
 import styled from 'styled-components'
-import { numberToHex } from '../App'
-
-import { devToolsSearchState, devItemIsOpenState } from '../App'
 
 import { searchIsFocusedState } from './Header'
+import { numberToHex } from '../utils/color'
+import { devItemIsOpenState, devToolsSearchState } from '../state/storage'
+import { Mark } from '../styles/Styles'
 
 const nullState = atom<Set<string>>({
   key: `nullState`,
@@ -91,12 +90,10 @@ const StateItem: FC<{
       >
         <span>
           {isObject && !isArray && !isSet && !isMap && (
-            <span className="json-mark">{`{${
-              Object.keys(contents).length
-            }} `}</span>
+            <Mark>{`{${Object.keys(contents).length}} `}</Mark>
           )}
           {(isArray || isSet || isMap) && (
-            <span className="json-mark">{`[${contents.length}] `}</span>
+            <Mark>{`[${contents.length}] `}</Mark>
           )}
         </span>
         {node.key.split('').map((key: string, index: number) => {
@@ -136,5 +133,6 @@ const ItemHeader = styled.span<{ isStuck: boolean }>`
     isStuck ? theme.headerBackground + numberToHex(0.5) : `transparent`};
 `
 const ItemLetter = styled.span<{ highlight: boolean }>`
-  color: ${({ highlight, theme }) => (highlight ? theme.boolean : `inherit`)};
+  color: ${({ highlight, theme }) =>
+    highlight ? theme.boolean : theme.primaryText};
 `

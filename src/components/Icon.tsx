@@ -1,10 +1,11 @@
+/// <reference types="vite-plugin-svgr/client" />
 import type { FC } from 'react'
 
 import { useRecoilState } from 'recoil'
 import styled from 'styled-components'
 
-import { devToolsOpenState } from '../App'
-// import { ReactComponent as Logo } from './recoil-logo.svg'
+import { ReactComponent as Logo } from '../assets/recoil-logo.svg'
+import { devToolsOpenState } from '../state/storage'
 
 const RecoilIcon = styled.button<{
   toolsAreOpen: boolean
@@ -36,7 +37,7 @@ const RecoilIcon = styled.button<{
     width: 30px;
     height: 30px;
     path {
-      fill: #424242;
+      fill: #272727;
     }
   }
 `
@@ -49,7 +50,7 @@ const DevToolsIcon: FC = () => {
       onClick={() => setIsOpen(!isOpen)}
       toolsAreOpen={isOpen}
     >
-      {/* <Logo /> */}
+      <Logo />
     </RecoilIcon>
   )
 }

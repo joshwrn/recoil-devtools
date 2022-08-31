@@ -1,23 +1,10 @@
 import type { FC } from 'react'
-import React, { Fragment, useState } from 'react'
 
-import { atom, useRecoilState } from 'recoil'
-import styled from 'styled-components'
-import { devItemIsOpenState, localStorageEffect } from '../App'
+import { useRecoilState } from 'recoil'
+import { devItemIsOpenState } from '../state/storage'
 
-// import * as Styled from './Styles'
-import {
-  Mark,
-  Null,
-  Undefined,
-  String,
-  Number,
-  Boolean,
-  Key,
-  Link,
-  Text,
-  Box,
-} from '../styles/Styles'
+import { Mark, Key, Box } from '../styles/Styles'
+import Primitive from './Primitive'
 
 const RecursiveTree: FC<{ contents: any; branchName: string }> = ({
   contents,
@@ -46,14 +33,8 @@ const RecursiveTree: FC<{ contents: any; branchName: string }> = ({
     }
 
     // handle other
-    if (branch === null) {
-      return <Null>null</Null>
-    }
-    if (branch === undefined) {
-      return <Undefined>undefined</Undefined>
-    }
-    if (branch instanceof Date) {
-      return <String>{branch.toString()}</String>
+    if (branch === null || branch === undefined || branch instanceof Date) {
+      return <Primitive data={branch} />
     }
 
     // handle object
@@ -103,23 +84,6 @@ const RecursiveTree: FC<{ contents: any; branchName: string }> = ({
               )
             }
 
-            let Inner = <span></span>
-            // handle other
-            if (item.branch === null) {
-              Inner = <Null>null</Null>
-            } else if (item.branch === undefined) {
-              Inner = <Undefined>undefined</Undefined>
-            } else if (item.branch instanceof Date) {
-              Inner = <String>{branch.toString()}</String>
-            } else {
-              Inner = (
-                <span className={`json-${typeof item.branch}`}>
-                  {typeof item.branch === `string`
-                    ? `"${item.branch.toString()}"`
-                    : item.branch.toString()}
-                </span>
-              )
-            }
             // handle item in object with no nested objects
             return (
               <Box border="green" key={currentDir + 'no-nested'}>
@@ -127,7 +91,7 @@ const RecursiveTree: FC<{ contents: any; branchName: string }> = ({
                   <Key>{item.key}</Key>
                   <Mark>:</Mark>
                   {` `}
-                  {Inner}
+                  <Primitive data={item.branch} />
                   <Mark>{index !== result.length - 1 && `,`}</Mark>
                 </p>
               </Box>
@@ -139,20 +103,11 @@ const RecursiveTree: FC<{ contents: any; branchName: string }> = ({
     }
 
     // non-object, non-array. aka is a "primitive"
-    return (
-      <span>
-        <span className={`json-${typeof branch}`}>
-          {typeof branch === `string`
-            ? `"${branch.toString()}"`
-            : branch.toString()}
-        </span>
-        {/* <Mark>{`,`}</Mark> */}
-      </span>
-    )
+    return <Primitive data={branch} />
   }
 
   return (
-    <span style={{ paddingLeft: `10px` }}>
+    <span style={{ paddingLeft: `12px` }}>
       {createTree(contents, branchName)}
     </span>
   )

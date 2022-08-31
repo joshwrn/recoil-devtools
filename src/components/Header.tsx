@@ -4,13 +4,13 @@ import type { FC } from 'react'
 // import { ReactComponent as Gear } from '@svg/gear.svg'
 import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import styled from 'styled-components'
-
 import {
   devToolsOpenState,
   devToolsSearchState,
-  numberToHex,
   recoilDevToolsSettingsState,
-} from '../App'
+} from '../state/storage'
+
+import { numberToHex } from '../utils/color'
 import { recoilDevToolSettingsOpenState } from './Settings'
 
 const Header = styled.div<{ headerTransparency: number }>`
