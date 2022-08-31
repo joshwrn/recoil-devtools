@@ -1,11 +1,12 @@
-import type { FC } from 'react'
-import React, { useCallback, useEffect } from 'react'
+import type { FC } from "react"
+import React, { useCallback, useEffect } from "react"
 
-import type { PanInfo } from 'framer-motion'
-import { motion, useMotionValue } from 'framer-motion'
-import { useRecoilState } from 'recoil'
-import styled, { css } from 'styled-components'
-import { recoilDevToolsSettingsState } from '../state/storage'
+import type { PanInfo } from "framer-motion"
+import { motion, useMotionValue } from "framer-motion"
+import { useRecoilState } from "recoil"
+import styled, { css } from "styled-components"
+
+import { recoilDevToolsSettingsState } from "../state/storage"
 
 export const HANDLE_SIZE = 10
 
@@ -49,8 +50,7 @@ const LayerContainer = styled(motion.div)<{
   position: fixed;
   display: flex;
   left: ${({ layerPosition }) => (layerPosition === `left` ? `0` : `initial`)};
-  right: ${({ layerPosition }) =>
-    layerPosition === `right` ? `0` : `initial`};
+  right: ${({ layerPosition }) => (layerPosition === `right` ? `0` : `initial`)};
   ${({ layerPosition, layerWidth, layerHeight }) => {
     if (layerPosition === `bottom`) {
       return css`

@@ -1,5 +1,5 @@
-import type { RefObject } from 'react'
-import { useEffect, useRef, useState } from 'react'
+import type { RefObject } from "react"
+import { useEffect, useRef, useState } from "react"
 
 export const useSticky = (): [
   ref: RefObject<HTMLDivElement> | null,
@@ -19,7 +19,7 @@ export const useSticky = (): [
         }
       )
       observer.observe(cachedRef)
-      return () => (setIsStuck(false), observer.unobserve(cachedRef))
+      return () => observer.unobserve(cachedRef)
     }
   }, [ref.current])
 

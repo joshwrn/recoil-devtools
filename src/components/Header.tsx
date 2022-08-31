@@ -1,17 +1,15 @@
-import type { FC } from 'react'
+import type { FC } from "react"
 
-import { ReactComponent as CloseIcon } from '../assets/close.svg'
-import { ReactComponent as Gear } from '../assets/gear.svg'
-import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
-import styled from 'styled-components'
+import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
+import styled from "styled-components"
+
 import {
   devToolsOpenState,
   devToolsSearchState,
   recoilDevToolsSettingsState,
-} from '../state/storage'
-
-import { numberToHex } from '../utils/color'
-import { recoilDevToolSettingsOpenState } from './Settings'
+} from "../state/storage"
+import { numberToHex } from "../utils/color"
+import { recoilDevToolSettingsOpenState } from "./Settings"
 
 const Header = styled.div<{ headerTransparency: number; fontSize: number }>`
   box-sizing: border-box;
@@ -91,10 +89,10 @@ const DevtoolsHeader: FC = () => {
         title="Settings"
         onClick={() => setSettingsOpen((prev: boolean) => !prev)}
       >
-        <Gear />
+        <i>o</i>
       </div>
       <div title="Close" onClick={() => setIsOpen(false)}>
-        <CloseIcon width={14} height={14} />
+        <i>x</i>
       </div>
     </Header>
   )

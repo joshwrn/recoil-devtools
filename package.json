@@ -1,10 +1,22 @@
 {
-  "name": "json-parser",
-  "private": true,
+  "name": "@eyecuelab/recoil-devtools",
+  "authors": [
+    "joshwrn",
+    "jeremybanka"
+  ],
   "version": "0.0.0",
+  "private": false,
   "type": "module",
+  "main": "src/App.tsx",
+  "files": [
+    "src",
+    "tsconfig.json"
+  ],
+  "workspaces": [
+    "example"
+  ],
   "scripts": {
-    "dev": "vite",
+    "dev": "cd example && vite",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
@@ -14,16 +26,31 @@
     "react-dom": "^18.2.0",
     "react-portal": "^4.2.2",
     "recoil": "^0.7.5",
-    "styled-components": "^5.3.5",
-    "vite-plugin-svgr": "^2.2.1"
+    "styled-components": "^5.3.5"
   },
   "devDependencies": {
+    "@eyecuelab/eslint-config-react": "^1.0.0",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "@types/react-portal": "^4.0.4",
     "@types/styled-components": "^5.1.26",
-    "@vitejs/plugin-react": "^2.0.1",
-    "typescript": "^4.6.4",
-    "vite": "^3.0.7"
-  }
+    "@typescript-eslint/eslint-plugin": "^5.12.1",
+    "@typescript-eslint/parser": "^5.12.1",
+    "eslint": "^8.9.0",
+    "eslint-config-prettier": "^8.4.0",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-jest": "^26.1.1",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.28.0",
+    "eslint-plugin-react-hooks": "4.4.0",
+    "prettier": "^2.5.1",
+    "typescript": "^4.6.4"
+  },
+  "eslintConfig": {
+    "extends": "@eyecuelab/react",
+    "parserOptions": {
+      "project": "./tsconfig.lib.json"
+    }
+  },
+  "packageManager": "yarn@3.2.3"
 }

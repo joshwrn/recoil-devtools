@@ -1,38 +1,35 @@
-import type { FC } from 'react'
+import type { FC } from "react"
 
-import { useRecoilState } from 'recoil'
-import { devItemIsOpenState } from '../state/storage'
+import { useRecoilState } from "recoil"
 
-import { Mark, Key, Box } from '../styles/Styles'
-import Badge from './Badge'
-import Primitive from './Primitive'
+import { devItemIsOpenState } from "../state/storage"
+import { Mark, Key, Box } from "../styles/Styles"
+import Badge from "./Badge"
+import Primitive from "./Primitive"
 
-const RecursiveTree: FC<{ contents: any; branchName: string }> = ({
+const RecursiveTree: FC<{ contents: unknown; branchName: string }> = ({
   contents,
   branchName,
 }) => {
   const [isOpen, toggleItemOpen] = useRecoilState(devItemIsOpenState)
 
-  const createTree = (branch: any, dir: string) => {
+  const createTree = (branch: unknown, dir: string) => {
     // handle array
-    const branchIsArray = Array.isArray(branch)
     const branchIsObject = typeof branch === `object`
-    const branchIsSet = branch instanceof Set
-    const branchIsMap = branch instanceof Map
 
-    if (branchIsSet || branchIsMap) {
+    if (branch instanceof Set || branch instanceof Map) {
       branch = Array.from(branch)
     }
 
-    if (branchIsArray) {
+    if (branch instanceof Array) {
       return (
         <>
           <Mark>[</Mark>
-          {branch.map((item: any, index: number) => {
+          {branch.map((item: unknown, index: number) => {
             return (
               <Box border="gray" key={dir + index}>
                 {createTree(item, `${dir}/${index}`)}
-                {index < branch.length - 1 && <Mark>,</Mark>}
+                {index < (branch as Array<unknown>).length - 1 && <Mark>,</Mark>}
               </Box>
             )
           })}
@@ -48,10 +45,12 @@ const RecursiveTree: FC<{ contents: any; branchName: string }> = ({
 
     // handle object
     if (branchIsObject) {
-      const result = Object.keys(branch).map((key) => ({
-        key: key,
-        branch: branch[key],
-      }))
+      const result = Object.keys(branch).map(
+        (key): { key: number | string | symbol; branch: unknown } => ({
+          key: key,
+          branch: (branch as object)[key as keyof typeof branch],
+        })
+      )
 
       // handle object with nested objects
       return (
@@ -60,19 +59,17 @@ const RecursiveTree: FC<{ contents: any; branchName: string }> = ({
           {result.map((item, index) => {
             const itemIsObject = typeof item.branch === `object`
             const itemIsArray = Array.isArray(item.branch)
-            const itemIsSet = item.branch instanceof Set
-            const itemIsMap = item.branch instanceof Map
 
-            if (itemIsSet || itemIsMap) {
+            if (item.branch instanceof Set || item.branch instanceof Map) {
               item.branch = Array.from(item.branch)
             }
 
-            const currentDir = `${dir}/${item.key}`
+            const currentDir = `${dir}/${String(item.key)}`
 
             // handle item in object with nested objects
             if ((itemIsObject || itemIsArray) && item.branch) {
               return (
-                <Box border="orange" key={currentDir + 'obj/array'}>
+                <Box border="orange" key={currentDir + `obj/array`}>
                   <Key
                     title={currentDir}
                     style={{ cursor: `pointer` }}
@@ -83,15 +80,17 @@ const RecursiveTree: FC<{ contents: any; branchName: string }> = ({
                       }))
                     }
                   >
-                    <Badge
-                      length={
-                        Array.isArray(item.branch)
-                          ? item.branch.length
-                          : Object.keys(item.branch).length
-                      }
-                    />
-                    {item.key}
-                    {isOpen[currentDir] && <Mark>:</Mark>}
+                    <>
+                      <Badge
+                        length={
+                          Array.isArray(item.branch)
+                            ? item.branch.length
+                            : Object.keys(item.branch).length
+                        }
+                      />
+                      {item.key}
+                      {isOpen[currentDir] && <Mark>:</Mark>}
+                    </>
                   </Key>
                   <span style={{ paddingLeft: `12px` }}>
                     {isOpen[currentDir] && createTree(item.branch, currentDir)}
@@ -102,9 +101,9 @@ const RecursiveTree: FC<{ contents: any; branchName: string }> = ({
 
             // handle item in object with no nested objects
             return (
-              <Box border="green" key={currentDir + 'no-nested'}>
+              <Box border="green" key={currentDir + `no-nested`}>
                 <p>
-                  <Key>{item.key}</Key>
+                  <Key>{String(item.key)}</Key>
                   <Mark>:</Mark>
                   {` `}
                   <Primitive data={item.branch} />

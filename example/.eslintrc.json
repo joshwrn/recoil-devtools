@@ -1,0 +1,6 @@
+{
+  "extends": "@eyecuelab/react",
+  "parserOptions": {
+    "project": "../tsconfig.app.json"
+  }
+}

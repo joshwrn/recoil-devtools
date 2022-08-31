@@ -1,5 +1,6 @@
-import { FC } from 'react'
-import { Mark } from '../styles/Styles'
+import type { FC } from "react"
+
+import { Mark } from "../styles/Styles"
 
 const Badge: FC<{ length?: number }> = ({ length }) => {
   if (!length) return <></>

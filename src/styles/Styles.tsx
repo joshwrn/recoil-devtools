@@ -1,11 +1,11 @@
-import styled from 'styled-components'
+import styled from "styled-components"
 
 const DEBUG = false
 
 export const Box = styled.div<{ border?: string }>`
   padding-left: 25px;
   ${({ border }) =>
-    DEBUG ? `border: 1px solid ${border ?? 'transparent'} !important;` : ``}
+    DEBUG ? `border: 1px solid ${border ?? `transparent`} !important;` : ``}
 `
 
 export const Mark = styled.span`
