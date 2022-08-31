@@ -17,6 +17,13 @@ const RecursiveTree: FC<{ contents: any; branchName: string }> = ({
     // handle array
     const branchIsArray = Array.isArray(branch)
     const branchIsObject = typeof branch === `object`
+    const branchIsSet = branch instanceof Set
+    const branchIsMap = branch instanceof Map
+
+    if (branchIsSet || branchIsMap) {
+      branch = Array.from(branch)
+    }
+
     if (branchIsArray) {
       return (
         <>
@@ -25,6 +32,7 @@ const RecursiveTree: FC<{ contents: any; branchName: string }> = ({
             return (
               <Box border="gray" key={dir + index}>
                 {createTree(item, `${dir}/${index}`)}
+                {index < branch.length - 1 && <Mark>,</Mark>}
               </Box>
             )
           })}
@@ -52,6 +60,12 @@ const RecursiveTree: FC<{ contents: any; branchName: string }> = ({
           {result.map((item, index) => {
             const itemIsObject = typeof item.branch === `object`
             const itemIsArray = Array.isArray(item.branch)
+            const itemIsSet = item.branch instanceof Set
+            const itemIsMap = item.branch instanceof Map
+
+            if (itemIsSet || itemIsMap) {
+              item.branch = Array.from(item.branch)
+            }
 
             const currentDir = `${dir}/${item.key}`
 

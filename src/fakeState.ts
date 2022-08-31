@@ -23,6 +23,7 @@ export const fakeState = atom({
     tags: ['anim', 'esse', 'enim', 'aliqua', 555, 'adipisicing', 'adipisicing'],
     greeting: 'Hello, Pena Velazquez! You have 4 unread messages.',
     favoriteFruit: 'banana',
+    nestedSet: new Set(['one', 'one', 'two', 'three']),
     nestedObject: {
       nestedKey: 'nestedValue',
       newItem: null,
@@ -31,6 +32,10 @@ export const fakeState = atom({
       {
         id: 0,
         name: 'Pope Mitchell',
+        map: new Map([
+          ['country', 'Chile'],
+          ['name', 'Tom'],
+        ]),
       },
       {
         id: 1,
