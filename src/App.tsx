@@ -11,10 +11,10 @@ import ResizableContainer from './components/ResizableContainer'
 import SettingsPage, {
   recoilDevToolSettingsOpenState,
 } from './components/Settings'
-import App from './components/List'
 import { numberToHex } from './utils/color'
 import { devToolsOpenState, recoilDevToolsSettingsState } from './state/storage'
 import { globalStyle } from './styles/globalStyle'
+import List from './components/List'
 
 const Tools: FC = () => {
   const settingsOpen = useRecoilValue(recoilDevToolSettingsOpenState)
@@ -30,7 +30,7 @@ const Tools: FC = () => {
             <>
               <DevtoolsHeader />
               <Inner height={height} position={position}>
-                <App />
+                <List />
               </Inner>
             </>
           )}
@@ -94,6 +94,7 @@ const Inner = styled.div<{ height: number; position: string }>`
   overflow-y: overlay;
   overflow-x: overlay;
   width: 100%;
+  position: relative;
   height: ${({ height, position }) =>
     position === `bottom` ? `${height}px` : `100vh`};
   padding-top: 60px;

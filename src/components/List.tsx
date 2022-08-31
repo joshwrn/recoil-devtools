@@ -1,6 +1,12 @@
-import { FC, Fragment } from 'react'
+import { FC, Fragment, useEffect } from 'react'
 
-import { atom, useRecoilSnapshot, useRecoilState, useRecoilValue } from 'recoil'
+import {
+  atom,
+  useRecoilSnapshot,
+  useRecoilState,
+  useRecoilValue,
+  useSetRecoilState,
+} from 'recoil'
 import { fakeState, fakeState2 } from '../fakeState'
 
 import RecursiveTree from './RecursiveTree'
@@ -9,22 +15,53 @@ import styled from 'styled-components'
 
 import { searchIsFocusedState } from './Header'
 import { numberToHex } from '../utils/color'
-import { devItemIsOpenState, devToolsSearchState } from '../state/storage'
+import {
+  devItemIsOpenState,
+  devToolsSearchState,
+  recoilDevToolsSettingsState,
+} from '../state/storage'
 import Badge from './Badge'
 import { Mark } from '../styles/Styles'
+import { AnimatePresence, motion } from 'framer-motion'
 
 const nullState = atom<Set<string>>({
   key: `nullState`,
   default: new Set([]),
 })
 
-const App: FC = () => {
+const stickyState = atom<null | string>({
+  key: `stickyState`,
+  default: null,
+})
+
+const Sticky = styled(motion.div)<{ width: number }>`
+  position: fixed;
+  display: flex;
+  align-items: center;
+  color: ${({ theme }) => theme.primaryText};
+  top: 60px;
+  right: 0;
+  justify-content: flex-end;
+  padding: 0 10px;
+  backdrop-filter: blur(5px);
+  width: ${({ width }) => width - 1}px;
+  height: 30px;
+  background: ${({ theme }) => theme.headerBackground + numberToHex(0.5)};
+  border-bottom: ${({ theme }) =>
+    `1px solid ${theme.faintOutline + numberToHex(0.7)}`};
+  border-top: ${({ theme }) =>
+    `1px solid ${theme.faintOutline + numberToHex(0.7)}`};
+`
+
+const List: FC = () => {
   const snapshot = useRecoilSnapshot()
   const userInput = useRecoilValue(devToolsSearchState)
   const searchIsFocused = useRecoilValue(searchIsFocusedState)
   const fake = useRecoilValue(fakeState)
   const fake2 = useRecoilValue(fakeState2)
   const [set, setSet] = useRecoilState(nullState)
+  const sticky = useRecoilValue(stickyState)
+  const { width, position } = useRecoilValue(recoilDevToolsSettingsState)
 
   snapshot.retain()
 
@@ -32,12 +69,20 @@ const App: FC = () => {
 
   return (
     <>
+      <AnimatePresence>
+        {sticky && (
+          <Sticky
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            width={width}
+          >
+            {sticky}
+          </Sticky>
+        )}
+      </AnimatePresence>
       {list.map((item) => {
         const node = item
-        const param = node.key.split(`__`)[1]
-        const { contents } = snapshot.getLoadable(node)
-        const data = contents instanceof Set ? Array.from(contents) : contents
-
         return (
           <Fragment key={'frag' + node.key}>
             {node.key.toLowerCase().includes(userInput) && (
@@ -66,6 +111,15 @@ const StateItem: FC<{
   const type = Object.prototype.toString.call(contents).slice(8, -1)
   const [ref, isStuck] = useSticky()
   const [isOpen, setIsOpen] = useRecoilState(devItemIsOpenState)
+  const setSticky = useSetRecoilState(stickyState)
+
+  useEffect(() => {
+    if (isStuck && isOpen[node.key]) {
+      setSticky(type)
+    } else {
+      setSticky(null)
+    }
+  }, [isStuck])
 
   const isDate = contents instanceof Date
   const isObject = typeof contents === `object` && contents && !isDate
@@ -85,7 +139,7 @@ const StateItem: FC<{
   return (
     <div style={{ padding: '5px 5px' }}>
       <ItemHeader
-        isStuck={isStuck && isOpen && (isObject || isArray)}
+        isStuck={isStuck && isOpen[node.key] && (isObject || isArray)}
         onClick={() =>
           setIsOpen((prev) => ({
             ...prev,
@@ -112,7 +166,6 @@ const StateItem: FC<{
               })}
             </span>
           </span>
-          {isStuck && <Mark>{type}</Mark>}
         </InnerHeader>
       </ItemHeader>
       {isOpen[node.key] && (
@@ -126,24 +179,16 @@ const StateItem: FC<{
   )
 }
 
-export default App
+export default List
 
 const ItemHeader = styled.span<{ isStuck: boolean }>`
   display: inline-block;
-  width: ${({ isStuck }) => (isStuck ? `calc(100% + 15px)` : `auto`)};
-  transform: ${({ isStuck }) => (isStuck ? `translateX(-10px)` : `none`)};
-  padding: ${({ isStuck }) => (isStuck ? `5px 15px` : `0`)};
+  transform: ${({ isStuck }) => (isStuck ? `translateY(5px)` : `none`)};
   position: sticky;
   top: 0;
   z-index: 1;
-  backdrop-filter: ${({ isStuck }) => (isStuck ? `blur(5px)` : `none`)};
-  border-bottom: ${({ isStuck, theme }) =>
-    isStuck ? `1px solid ${theme.faintOutline + numberToHex(0.7)}` : `none`};
-  border-top: ${({ isStuck, theme }) =>
-    isStuck ? `1px solid ${theme.faintOutline + numberToHex(0.7)}` : `none`};
   cursor: pointer;
-  background: ${({ isStuck, theme }) =>
-    isStuck ? theme.headerBackground + numberToHex(0.5) : `transparent`};
+  transition: transform 0.2s ease-in-out;
 `
 const InnerHeader = styled.div`
   display: flex;
