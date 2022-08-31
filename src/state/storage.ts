@@ -26,7 +26,7 @@ export const recoilDevToolsSettingsState = atom({
     transparency: 0,
     vibrancy: 30,
     fonts: ``,
-    fontSize: 16,
+    fontSize: 14,
   },
   effects: [localStorageEffect(`devToolsSettingsStateStorage`)],
 })

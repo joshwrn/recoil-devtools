@@ -11,10 +11,11 @@ import { searchIsFocusedState } from './Header'
 import { numberToHex } from '../utils/color'
 import { devItemIsOpenState, devToolsSearchState } from '../state/storage'
 import Badge from './Badge'
+import { Mark } from '../styles/Styles'
 
 const nullState = atom<Set<string>>({
   key: `nullState`,
-  default: new Set(),
+  default: new Set([]),
 })
 
 const App: FC = () => {
@@ -62,6 +63,7 @@ const StateItem: FC<{
   searchIsFocused: boolean
 }> = ({ snapshot, node, input, searchIsFocused }) => {
   let { contents } = snapshot.getLoadable(node)
+  const type = Object.prototype.toString.call(contents).slice(8, -1)
   const [ref, isStuck] = useSticky()
   const [isOpen, setIsOpen] = useRecoilState(devItemIsOpenState)
 
@@ -93,21 +95,24 @@ const StateItem: FC<{
         ref={ref}
       >
         <InnerHeader>
-          <Badge length={length} />
-          <span>
-            {node.key.split('').map((key: string, index: number) => {
-              return (
-                <ItemLetter
-                  highlight={
-                    input.includes(key.toLowerCase()) && searchIsFocused
-                  }
-                  key={index}
-                >
-                  {key}
-                </ItemLetter>
-              )
-            })}
+          <span title={type}>
+            <Badge length={length} />
+            <span>
+              {node.key.split('').map((key: string, index: number) => {
+                return (
+                  <ItemLetter
+                    highlight={
+                      input.includes(key.toLowerCase()) && searchIsFocused
+                    }
+                    key={index}
+                  >
+                    {key}
+                  </ItemLetter>
+                )
+              })}
+            </span>
           </span>
+          {isStuck && <Mark>{type}</Mark>}
         </InnerHeader>
       </ItemHeader>
       {isOpen[node.key] && (
@@ -127,10 +132,15 @@ const ItemHeader = styled.span<{ isStuck: boolean }>`
   display: inline-block;
   width: ${({ isStuck }) => (isStuck ? `calc(100% + 15px)` : `auto`)};
   transform: ${({ isStuck }) => (isStuck ? `translateX(-10px)` : `none`)};
-  padding: ${({ isStuck }) => (isStuck ? `0 15px` : `0`)};
+  padding: ${({ isStuck }) => (isStuck ? `5px 15px` : `0`)};
   position: sticky;
   top: 0;
-  backdrop-filter: ${({ isStuck }) => (isStuck ? `blur(30px)` : `none`)};
+  z-index: 1;
+  backdrop-filter: ${({ isStuck }) => (isStuck ? `blur(5px)` : `none`)};
+  border-bottom: ${({ isStuck, theme }) =>
+    isStuck ? `1px solid ${theme.faintOutline + numberToHex(0.7)}` : `none`};
+  border-top: ${({ isStuck, theme }) =>
+    isStuck ? `1px solid ${theme.faintOutline + numberToHex(0.7)}` : `none`};
   cursor: pointer;
   background: ${({ isStuck, theme }) =>
     isStuck ? theme.headerBackground + numberToHex(0.5) : `transparent`};
@@ -138,6 +148,7 @@ const ItemHeader = styled.span<{ isStuck: boolean }>`
 const InnerHeader = styled.div`
   display: flex;
   align-items: center;
+  justify-content: space-between;
 `
 const ItemLetter = styled.span<{ highlight: boolean }>`
   color: ${({ highlight, theme }) =>

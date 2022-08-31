@@ -188,7 +188,7 @@ const SettingsPage: FC = () => {
           onChange={(e) =>
             setSettings((prev: DevToolSettings) => ({
               ...prev,
-              fonts: e.target.value,
+              fonts: e.target.value.replace(/[^a-zA-Z0-9, ]/g, ``),
             }))
           }
         />
