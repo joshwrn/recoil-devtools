@@ -9,7 +9,10 @@ import { devThemes } from '../styles/themes'
 import { HANDLE_SIZE } from './ResizableContainer'
 /* eslint-disable max-lines */
 
-const Container = styled.div<{ height: number; position: string }>`
+const Container = styled.div<{
+  height: number
+  position: string
+}>`
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -34,7 +37,6 @@ const Container = styled.div<{ height: number; position: string }>`
       gap: 10px;
     }
     p {
-      font-size: 20px;
       font-weight: 500;
       color: ${({ theme }) => theme.faintText};
     }
@@ -53,9 +55,6 @@ const Option = styled.div`
   justify-content: space-between;
   border-bottom: 1px dashed ${({ theme }) => theme.faintOutline};
   padding: 5px 0;
-  * {
-    font-size: 20px;
-  }
   label {
     font-weight: 700;
     color: ${({ theme }) => theme.text};

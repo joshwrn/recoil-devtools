@@ -10,7 +10,7 @@ import styled from 'styled-components'
 import { searchIsFocusedState } from './Header'
 import { numberToHex } from '../utils/color'
 import { devItemIsOpenState, devToolsSearchState } from '../state/storage'
-import { Mark } from '../styles/Styles'
+import Badge from './Badge'
 
 const nullState = atom<Set<string>>({
   key: `nullState`,
@@ -75,11 +75,15 @@ const StateItem: FC<{
     contents = Array.from(contents)
   }
 
+  let length = 0
+  if (Array.isArray(contents)) length = contents.length
+  if (typeof contents === `object` && contents)
+    length = Object.keys(contents).length
+
   return (
     <div style={{ padding: '5px 5px' }}>
       <ItemHeader
         isStuck={isStuck && isOpen && (isObject || isArray)}
-        className="json-mark"
         onClick={() =>
           setIsOpen((prev) => ({
             ...prev,
@@ -88,24 +92,23 @@ const StateItem: FC<{
         }
         ref={ref}
       >
-        <span>
-          {isObject && !isArray && !isSet && !isMap && (
-            <Mark>{`{${Object.keys(contents).length}} `}</Mark>
-          )}
-          {(isArray || isSet || isMap) && (
-            <Mark>{`[${contents.length}] `}</Mark>
-          )}
-        </span>
-        {node.key.split('').map((key: string, index: number) => {
-          return (
-            <ItemLetter
-              highlight={input.includes(key.toLowerCase())}
-              key={index}
-            >
-              {key}
-            </ItemLetter>
-          )
-        })}
+        <InnerHeader>
+          <Badge length={length} />
+          <span>
+            {node.key.split('').map((key: string, index: number) => {
+              return (
+                <ItemLetter
+                  highlight={
+                    input.includes(key.toLowerCase()) && searchIsFocused
+                  }
+                  key={index}
+                >
+                  {key}
+                </ItemLetter>
+              )
+            })}
+          </span>
+        </InnerHeader>
       </ItemHeader>
       {isOpen[node.key] && (
         <RecursiveTree
@@ -131,6 +134,10 @@ const ItemHeader = styled.span<{ isStuck: boolean }>`
   cursor: pointer;
   background: ${({ isStuck, theme }) =>
     isStuck ? theme.headerBackground + numberToHex(0.5) : `transparent`};
+`
+const InnerHeader = styled.div`
+  display: flex;
+  align-items: center;
 `
 const ItemLetter = styled.span<{ highlight: boolean }>`
   color: ${({ highlight, theme }) =>

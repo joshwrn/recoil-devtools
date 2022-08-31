@@ -4,6 +4,7 @@ import { useRecoilState } from 'recoil'
 import { devItemIsOpenState } from '../state/storage'
 
 import { Mark, Key, Box } from '../styles/Styles'
+import Badge from './Badge'
 import Primitive from './Primitive'
 
 const RecursiveTree: FC<{ contents: any; branchName: string }> = ({
@@ -68,12 +69,13 @@ const RecursiveTree: FC<{ contents: any; branchName: string }> = ({
                       }))
                     }
                   >
-                    <Mark>
-                      {Array.isArray(item.branch)
-                        ? `[${item.branch.length}]`
-                        : `{${Object.keys(item.branch).length}}`}
-                      {` `}
-                    </Mark>
+                    <Badge
+                      length={
+                        Array.isArray(item.branch)
+                          ? item.branch.length
+                          : Object.keys(item.branch).length
+                      }
+                    />
                     {item.key}
                     {isOpen[currentDir] && <Mark>:</Mark>}
                   </Key>

@@ -7,6 +7,7 @@ export const Box = styled.div<{ border?: string }>`
   ${({ border }) =>
     DEBUG ? `border: 1px solid ${border ?? 'transparent'} !important;` : ``}
 `
+
 export const Mark = styled.span`
   color: ${({ theme }) => theme.mark};
 `

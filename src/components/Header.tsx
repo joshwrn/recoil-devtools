@@ -13,7 +13,7 @@ import {
 import { numberToHex } from '../utils/color'
 import { recoilDevToolSettingsOpenState } from './Settings'
 
-const Header = styled.div<{ headerTransparency: number }>`
+const Header = styled.div<{ headerTransparency: number; fontSize: number }>`
   box-sizing: border-box;
   position: absolute;
   height: 40px;
@@ -41,6 +41,7 @@ const Header = styled.div<{ headerTransparency: number }>`
     border-radius: 7px;
     font-size: 20px;
     color: ${({ theme }) => theme.text};
+    font-size: ${({ fontSize }) => fontSize}px;
     ::placeholder {
       color: ${({ theme }) => theme.faintText};
     }
@@ -75,14 +76,13 @@ export const searchIsFocusedState = atom({
 
 const DevtoolsHeader: FC = () => {
   const setSettingsOpen = useSetRecoilState(recoilDevToolSettingsOpenState)
-  const { transparency } = useRecoilValue(recoilDevToolsSettingsState)
+  const { transparency, fontSize } = useRecoilValue(recoilDevToolsSettingsState)
   const setIsOpen = useSetRecoilState(devToolsOpenState)
   const [userInput, setUserInput] = useRecoilState(devToolsSearchState)
-  const [searchIsFocused, setSearchIsFocused] =
-    useRecoilState(searchIsFocusedState)
+  const setSearchIsFocused = useSetRecoilState(searchIsFocusedState)
   const headerTransparency = transparency > 0.3 ? transparency + 0.3 : 0.4
   return (
-    <Header headerTransparency={headerTransparency}>
+    <Header headerTransparency={headerTransparency} fontSize={fontSize}>
       <input
         value={userInput}
         onChange={(e) => setUserInput(e.target.value.toLowerCase())}
