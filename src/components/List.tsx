@@ -1,5 +1,5 @@
 import type { FC } from "react"
-import { Fragment, useEffect, useRef } from "react"
+import React, { Fragment, useEffect, useRef } from "react"
 
 import { AnimatePresence, motion } from "framer-motion"
 import type { RecoilValue, Snapshot } from "recoil"
