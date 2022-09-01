@@ -8,6 +8,17 @@ import { devThemes } from "../styles/themes"
 import { HANDLE_SIZE } from "./ResizableContainer"
 /* eslint-disable max-lines */
 
+export const DEFAULT_SETTINGS = {
+  position: `right`,
+  theme: `Github Dark`,
+  width: 430,
+  height: 430,
+  transparency: 0,
+  vibrancy: 30,
+  fonts: ``,
+  fontSize: 14,
+}
+
 const Container = styled.div<{
   height: number
   position: string
@@ -59,7 +70,6 @@ const Option = styled.div`
   justify-content: space-between;
   border-bottom: 1px dashed ${({ theme }) => theme.faintOutline};
   padding: 5px 0;
-
   label {
     font-weight: 700;
     color: ${({ theme }) => theme.text};
@@ -116,6 +126,29 @@ const Option = styled.div`
       color: ${({ theme }) => theme.faintText};
     }
   }
+`
+const Footer = styled.footer`
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  position: absolute;
+  z-index: 100;
+  bottom: 0;
+  right: 0;
+  padding-bottom: 30px;
+`
+const ResetButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  width: 200px;
+  height: 30px;
+  position: relative;
+  background-color: ${({ theme }) => theme.iconBackground};
+  border: 1px solid ${({ theme }) => theme.faintOutline};
+  color: ${({ theme }) => theme.faintText};
+  border-radius: 5px;
 `
 
 export interface DevToolSettings {
@@ -244,6 +277,15 @@ const SettingsPage: FC = () => {
           }
         />
       </Option>
+      <Footer>
+        <ResetButton
+          onClick={() => {
+            setSettings(DEFAULT_SETTINGS)
+          }}
+        >
+          <p>Reset All</p>
+        </ResetButton>
+      </Footer>
     </Container>
   )
 }
