@@ -13,6 +13,9 @@ const Container = styled.div<{
   position: string
   fontSize: number
 }>`
+  * {
+    font-size: 16px !important;
+  }
   display: flex;
   position: relative;
   flex-direction: column;
@@ -56,6 +59,7 @@ const Option = styled.div`
   justify-content: space-between;
   border-bottom: 1px dashed ${({ theme }) => theme.faintOutline};
   padding: 5px 0;
+
   label {
     font-weight: 700;
     color: ${({ theme }) => theme.text};

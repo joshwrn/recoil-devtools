@@ -40,7 +40,7 @@ const Header = styled.div<{ headerTransparency: number; fontSize: number }>`
     border-radius: 7px;
     font-size: 20px;
     color: ${({ theme }) => theme.text};
-    font-size: ${({ fontSize }) => fontSize}px;
+    font-size: 14px !important;
     ::placeholder {
       color: ${({ theme }) => theme.faintText};
     }
@@ -57,6 +57,10 @@ const Header = styled.div<{ headerTransparency: number; fontSize: number }>`
     border-radius: 50%;
     background-color: ${({ theme }) => theme.iconBackground}b3;
     color: ${({ theme }) => theme.faintText};
+    i {
+      font-size: 14px !important;
+      transform: translateY(1px);
+    }
     :hover {
       background-color: ${({ theme }) => theme.iconBackground}e6;
     }
