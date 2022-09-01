@@ -1,15 +1,9 @@
 import type { FC } from "react"
-import React, { Fragment, useEffect, useRef } from "react"
+import { Fragment } from "react"
 
 import { AnimatePresence, motion } from "framer-motion"
 import type { RecoilValue, Snapshot } from "recoil"
-import {
-  atom,
-  useRecoilSnapshot,
-  useRecoilState,
-  useRecoilValue,
-  useSetRecoilState,
-} from "recoil"
+import { useRecoilSnapshot, useRecoilState, useRecoilValue } from "recoil"
 import styled from "styled-components"
 
 import useSticky from "../hooks/useSticky"
@@ -18,7 +12,6 @@ import {
   devToolsSearchState,
   recoilDevToolsSettingsState,
 } from "../state/storage"
-import { Mark } from "../styles/Styles"
 import { numberToHex } from "../utils/color"
 import Badge from "./Badge"
 import { searchIsFocusedState } from "./Header"
@@ -28,13 +21,14 @@ const List: FC = () => {
   const snapshot = useRecoilSnapshot()
   const userInput = useRecoilValue(devToolsSearchState)
   const searchIsFocused = useRecoilValue(searchIsFocusedState)
+  const { width } = useRecoilValue(recoilDevToolsSettingsState)
 
   snapshot.retain()
 
   const list = Array.from(snapshot.getNodes_UNSTABLE())
 
   return (
-    <>
+    <Container width={width}>
       {list.map((item) => {
         const node = item
         return (
@@ -51,7 +45,7 @@ const List: FC = () => {
           </Fragment>
         )
       })}
-    </>
+    </Container>
   )
 }
 
@@ -83,6 +77,7 @@ const StateItem: FC<{
   }
 
   const wordStart = node.key.toLowerCase().indexOf(input)
+  const shouldStick = isStuck && isOpen[node.key] && (isObject || isArray)
 
   return (
     <>
@@ -96,19 +91,9 @@ const StateItem: FC<{
           }}
           ref={ref}
         />
-        {/* <AnimatePresence>
-          {isStuck && isOpen[node.key] && (
-            <Sticky
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              {type}
-            </Sticky>
-          )}
-        </AnimatePresence> */}
+
         <ItemHeader
-          isStuck={isStuck && isOpen[node.key] && (isObject || isArray)}
+          isStuck={shouldStick}
           onClick={() =>
             setIsOpen((prev) => ({
               ...prev,
@@ -116,7 +101,19 @@ const StateItem: FC<{
             }))
           }
         >
-          <InnerHeader>
+          <AnimatePresence>
+            {shouldStick && (
+              <Sticky
+                className="sticky"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                {type}
+              </Sticky>
+            )}
+          </AnimatePresence>
+          <InnerHeader isStuck={shouldStick}>
             <span title={type}>
               <Badge length={length} />
               <span>
@@ -154,36 +151,40 @@ export default List
 
 const ItemHeader = styled.span<{ isStuck: boolean }>`
   display: inline-block;
-  /* transform: ${({ isStuck }) => (isStuck ? `translateY(5px)` : `none`)}; */
   position: sticky;
-  backdrop-filter: blur(10px);
   top: 0;
   z-index: 1;
   cursor: pointer;
   transition: transform 0.2s ease-in-out;
 `
-const InnerHeader = styled.div`
+const InnerHeader = styled.div<{ isStuck: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  transform: ${({ isStuck }) => (isStuck ? `translateY(5px)` : `none`)};
 `
 const ItemLetter = styled.span<{ highlight: boolean }>`
   color: ${({ highlight, theme }) =>
     highlight ? theme.boolean : theme.primaryText};
 `
+const Container = styled.div<{ width: number }>`
+  .sticky {
+    width: ${({ width }) => width}px;
+  }
+`
 const Sticky = styled(motion.div)`
-  position: sticky;
+  position: absolute;
   display: flex;
   align-items: center;
   color: ${({ theme }) => theme.primaryText};
   top: 0px;
+  left: 0px;
   justify-content: flex-end;
-  padding-right: 15px;
   backdrop-filter: blur(5px);
   backface-visibility: hidden;
-  transform: translateZ(0) scale(1, 1);
-  width: calc(100% + 20px);
-  transform: translateX(-15px);
+  transform: translateZ(0) scale(1, 1) translateX(-10px);
+  padding: 0 13px;
+  z-index: -1;
   height: 30px;
   background: ${({ theme }) => theme.headerBackground + numberToHex(0.5)};
   border-bottom: ${({ theme }) =>
