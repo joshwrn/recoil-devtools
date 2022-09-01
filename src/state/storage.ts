@@ -21,7 +21,7 @@ export const recoilDevToolsSettingsState = atom({
   key: `recoilDevToolsSettingsState`,
   default: {
     position: `right`,
-    theme: `Light`,
+    theme: `Github Dark`,
     width: 430,
     height: 430,
     transparency: 0,

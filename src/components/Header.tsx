@@ -3,6 +3,7 @@ import type { FC } from "react"
 import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import styled from "styled-components"
 
+import { SettingsIcon } from "../assets/SettingsIcon"
 import {
   devToolsOpenState,
   devToolsSearchState,
@@ -55,6 +56,7 @@ const Header = styled.div<{ headerTransparency: number; fontSize: number }>`
     transition: background-color 0.2s;
     border-radius: 50%;
     background-color: ${({ theme }) => theme.iconBackground}b3;
+    color: ${({ theme }) => theme.faintText};
     :hover {
       background-color: ${({ theme }) => theme.iconBackground}e6;
     }
@@ -89,7 +91,7 @@ const DevtoolsHeader: FC = () => {
         title="Settings"
         onClick={() => setSettingsOpen((prev: boolean) => !prev)}
       >
-        <i>o</i>
+        <SettingsIcon />
       </div>
       <div title="Close" onClick={() => setIsOpen(false)}>
         <i>x</i>

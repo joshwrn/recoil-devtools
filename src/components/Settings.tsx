@@ -14,6 +14,7 @@ const Container = styled.div<{
   fontSize: number
 }>`
   display: flex;
+  position: relative;
   flex-direction: column;
   width: 100%;
   padding: 20px;

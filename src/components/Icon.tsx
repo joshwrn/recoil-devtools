@@ -3,8 +3,8 @@ import type { FC } from "react"
 import { useRecoilState } from "recoil"
 import styled from "styled-components"
 
+import { Logo } from "../assets/Logo"
 import { devToolsOpenState } from "../state/storage"
-import { Logo } from "./Logo"
 
 const RecoilIcon = styled.button<{
   toolsAreOpen: boolean

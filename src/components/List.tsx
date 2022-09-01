@@ -21,14 +21,14 @@ const List: FC = () => {
   const snapshot = useRecoilSnapshot()
   const userInput = useRecoilValue(devToolsSearchState)
   const searchIsFocused = useRecoilValue(searchIsFocusedState)
-  const { width } = useRecoilValue(recoilDevToolsSettingsState)
+  const { width, transparency } = useRecoilValue(recoilDevToolsSettingsState)
 
   snapshot.retain()
 
   const list = Array.from(snapshot.getNodes_UNSTABLE())
 
   return (
-    <Container width={width}>
+    <Container transparency={transparency} width={width}>
       {list.map((item) => {
         const node = item
         return (
@@ -81,7 +81,7 @@ const StateItem: FC<{
 
   return (
     <>
-      <div style={{ padding: `5px 5px` }}>
+      <div>
         <div
           style={{
             width: `100px`,
@@ -167,10 +167,16 @@ const ItemLetter = styled.span<{ highlight: boolean }>`
   color: ${({ highlight, theme }) =>
     highlight ? theme.boolean : theme.primaryText};
 `
-const Container = styled.div<{ width: number }>`
+const Container = styled.div<{ width: number; transparency: number }>`
   .sticky {
     width: ${({ width }) => width}px;
+    background: ${({ theme, transparency }) =>
+      theme.headerBackground + numberToHex(1 - transparency / 1.5)};
   }
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 0 10px;
 `
 const Sticky = styled(motion.div)`
   position: absolute;
@@ -182,11 +188,10 @@ const Sticky = styled(motion.div)`
   justify-content: flex-end;
   backdrop-filter: blur(5px);
   backface-visibility: hidden;
-  transform: translateZ(0) scale(1, 1) translateX(-10px);
-  padding: 0 13px;
+  transform: translateZ(0) scale(1, 1) translateX(-15px);
+  padding: 0 17px;
   z-index: -1;
   height: 30px;
-  background: ${({ theme }) => theme.headerBackground + numberToHex(0.5)};
   border-bottom: ${({ theme }) =>
     `1px solid ${theme.faintOutline + numberToHex(0.7)}`};
   border-top: ${({ theme }) =>
