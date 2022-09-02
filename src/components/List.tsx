@@ -21,30 +21,38 @@ const List: FC = () => {
   const snapshot = useRecoilSnapshot()
   const userInput = useRecoilValue(devToolsSearchState)
   const searchIsFocused = useRecoilValue(searchIsFocusedState)
-  const { width, transparency } = useRecoilValue(recoilDevToolsSettingsState)
+  const { width, transparency, position } = useRecoilValue(
+    recoilDevToolsSettingsState
+  )
 
   snapshot.retain()
 
   const list = Array.from(snapshot.getNodes_UNSTABLE())
 
   return (
-    <Container transparency={transparency} width={width}>
-      {list.map((item) => {
-        const node = item
-        return (
-          <Fragment key={`frag` + node.key}>
-            {node.key.toLowerCase().includes(userInput) && (
-              <StateItem
-                key={`state:` + node.key}
-                node={node}
-                snapshot={snapshot}
-                input={userInput}
-                searchIsFocused={searchIsFocused}
-              />
-            )}
-          </Fragment>
+    <Container position={position} transparency={transparency} width={width}>
+      {list
+        .filter((node) =>
+          userInput
+            .split(` `)
+            .some((phrase) => node.key.toLowerCase().includes(phrase))
         )
-      })}
+        .map((item) => {
+          const node = item
+          return (
+            <Fragment key={`frag` + node.key}>
+              {
+                <StateItem
+                  key={`state:` + node.key}
+                  node={node}
+                  snapshot={snapshot}
+                  input={userInput}
+                  searchIsFocused={searchIsFocused}
+                />
+              }
+            </Fragment>
+          )
+        })}
     </Container>
   )
 }
@@ -76,7 +84,11 @@ const StateItem: FC<{
     length = Object.keys(contents).length
   }
 
-  const wordStart = node.key.toLowerCase().indexOf(input)
+  const words = input.split(` `)
+  const wordToHighlight = words.find((word) =>
+    node.key.toLowerCase().includes(word)
+  )
+  const wordStart = node.key.toLowerCase().indexOf(wordToHighlight || ``)
   const shouldStick = isStuck && isOpen[node.key] && (isObject || isArray)
 
   return (
@@ -122,7 +134,8 @@ const StateItem: FC<{
                     <ItemLetter
                       highlight={
                         index >= wordStart &&
-                        index <= wordStart + input.length - 1 &&
+                        index <=
+                          wordStart + (wordToHighlight?.length ?? 1) - 1 &&
                         searchIsFocused
                       }
                       key={index}
@@ -167,9 +180,14 @@ const ItemLetter = styled.span<{ highlight: boolean }>`
   color: ${({ highlight, theme }) =>
     highlight ? theme.boolean : theme.primaryText};
 `
-const Container = styled.div<{ width: number; transparency: number }>`
+const Container = styled.div<{
+  width: number
+  transparency: number
+  position: string
+}>`
   .sticky {
-    width: ${({ width }) => width}px;
+    width: ${({ width, position }) =>
+      position !== `bottom` ? width + `px` : `100%`};
     background: ${({ theme, transparency }) =>
       `${theme.headerBackground}${numberToHex(
         transparency > 0.3 ? transparency + 0.3 : 0.6
