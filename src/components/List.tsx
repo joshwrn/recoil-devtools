@@ -171,7 +171,9 @@ const Container = styled.div<{ width: number; transparency: number }>`
   .sticky {
     width: ${({ width }) => width}px;
     background: ${({ theme, transparency }) =>
-      theme.headerBackground + numberToHex(1 - transparency / 1.5)};
+      `${theme.headerBackground}${numberToHex(
+        transparency > 0.3 ? transparency + 0.3 : 0.6
+      )}`};
   }
   display: flex;
   flex-direction: column;
@@ -193,7 +195,7 @@ const Sticky = styled(motion.div)`
   z-index: -1;
   height: 30px;
   border-bottom: ${({ theme }) =>
-    `1px solid ${theme.faintOutline + numberToHex(0.7)}`};
+    `1px solid ${theme.faintOutline + numberToHex(0.7)}`} !important;
   border-top: ${({ theme }) =>
-    `1px solid ${theme.faintOutline + numberToHex(0.7)}`};
+    `1px solid ${theme.faintOutline + numberToHex(0.7)}`} !important;
 `
