@@ -64,7 +64,7 @@ const Icon = styled.div`
   color: ${({ theme }) => theme.faintText};
   i {
     font-size: 14px !important;
-    transform: translateY(1px);
+    transform: translate(0.5px, 1px);
   }
   :hover {
     background-color: ${({ theme }) => theme.iconBackground}e6;
@@ -104,7 +104,7 @@ const DevtoolsHeader: FC = () => {
           onClick={() => setQuickMenuIsOpen((prev) => !prev)}
           title="Quick Options"
         >
-          <DotsIcon size={19} />
+          <DotsIcon style={{ transform: `translate(.5px, 0)` }} size={19} />
         </Icon>
         <QuickMenu />
       </div>
