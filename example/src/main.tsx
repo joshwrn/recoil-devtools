@@ -2,13 +2,18 @@ import type { FC } from "react"
 import React from "react"
 
 import ReactDOM from "react-dom/client"
-import { RecoilRoot, useRecoilValue } from "recoil"
+import { atomFamily, RecoilRoot, useRecoilState, useRecoilValue } from "recoil"
 
 import "./index.css"
 import RecoilInspector from "../../src/App"
 import Bg from "./bg.jpg"
 import { fakeState, fakeState2, fakeState3 } from "./fakeState"
 import styled from "styled-components"
+
+const fakeAtomFamily = atomFamily({
+  key: `fakeAtomFamily`,
+  default: [],
+})
 
 const Container = styled.div`
   display: flex;
@@ -25,6 +30,8 @@ const Example: FC = () => {
   useRecoilValue(fakeState)
   useRecoilValue(fakeState2)
   useRecoilValue(fakeState3)
+  useRecoilState(fakeAtomFamily(1))
+  useRecoilState(fakeAtomFamily(2))
   return (
     <Container>
       <RecoilInspector />

@@ -1,8 +1,8 @@
 import type { FC } from "react"
-import { Fragment } from "react"
+import { useState, useMemo, Fragment } from "react"
 
 import { AnimatePresence, motion } from "framer-motion"
-import type { RecoilValue, Snapshot } from "recoil"
+import type { RecoilState, RecoilValue, Snapshot } from "recoil"
 import { useRecoilSnapshot, useRecoilState, useRecoilValue } from "recoil"
 import styled from "styled-components"
 
@@ -17,6 +17,8 @@ import Badge from "./Badge"
 import { searchIsFocusedState } from "./Header"
 import RecursiveTree from "./RecursiveTree"
 
+/* eslint-disable max-lines */
+
 const List: FC = () => {
   const snapshot = useRecoilSnapshot()
   const userInput = useRecoilValue(devToolsSearchState)
@@ -24,14 +26,36 @@ const List: FC = () => {
   const { width, transparency, position } = useRecoilValue(
     recoilDevToolsSettingsState
   )
+  const [allAtoms, setAllAtoms] = useState<RecoilState<unknown>[]>([])
+  const [allAtomFamilies, setAllAtomFamilies] = useState<any[]>([])
+
+  useMemo(() => {
+    const list = Array.from(snapshot.getNodes_UNSTABLE())
+    const atomFamilies: any = new Map()
+    const temp: any = []
+    list.map((item) => {
+      console.log(item)
+      if (item.key.includes(`__`)) {
+        const [key, id] = item.key.split(`__`)
+        if (!atomFamilies.has(key)) {
+          atomFamilies.set(key, [])
+        }
+        atomFamilies.get(key).push(item)
+      } else {
+        temp.push(item)
+      }
+    })
+
+    setAllAtoms(temp)
+    setAllAtomFamilies(Array.from(atomFamilies))
+    console.log(Array.from(atomFamilies))
+  }, [snapshot, userInput])
 
   snapshot.retain()
 
-  const list = Array.from(snapshot.getNodes_UNSTABLE())
-
   return (
     <Container position={position} transparency={transparency} width={width}>
-      {list
+      {allAtoms
         .filter((node) =>
           userInput
             .split(` `)
@@ -53,7 +77,67 @@ const List: FC = () => {
             </Fragment>
           )
         })}
+      {allAtomFamilies
+        .filter((node) =>
+          userInput
+            .split(` `)
+            .some((phrase) => node[0].toLowerCase().includes(phrase))
+        )
+        .map((node) => {
+          return (
+            <AtomFamilyItem
+              key={`atomFamily:` + node[0]}
+              node={node}
+              snapshot={snapshot}
+              userInput={userInput}
+              searchIsFocused={searchIsFocused}
+            />
+          )
+        })}
     </Container>
+  )
+}
+
+const AtomFamilyItem: FC<{
+  snapshot: Snapshot
+  node: any
+  userInput: any
+  searchIsFocused: any
+}> = ({ snapshot, node, userInput, searchIsFocused }) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const [isSticky, setIsSticky] = useState(false)
+  return (
+    <Fragment key={`frag` + node[0]}>
+      <div>
+        <span
+          style={{ color: `white` }}
+          onClick={() => setIsOpen((prev) => !prev)}
+        >
+          {` `}
+          {node[0]}
+          {` `}
+        </span>
+        {isOpen && (
+          <div
+            style={{
+              paddingLeft: `10px`,
+            }}
+          >
+            {node[1].map((item: any) => {
+              return (
+                <StateItem
+                  key={`state:` + item.key}
+                  node={item}
+                  snapshot={snapshot}
+                  input={userInput}
+                  searchIsFocused={searchIsFocused}
+                />
+              )
+            })}
+          </div>
+        )}
+      </div>
+    </Fragment>
   )
 }
 
@@ -86,75 +170,70 @@ const StateItem: FC<{
   const shouldStick = isStuck && isOpen[node.key] && (isObject || isArray)
 
   return (
-    <>
-      <div>
-        <div
-          style={{
-            width: `100px`,
-            height: `1px`,
-            position: `sticky`,
-            top: `-1px`,
-          }}
-          ref={ref}
-        />
-
-        <ItemHeader
-          isStuck={shouldStick}
-          onClick={() =>
-            setIsOpen((prev) => ({
-              ...prev,
-              [node.key]: !prev[node.key],
-            }))
-          }
-        >
-          <AnimatePresence>
-            {shouldStick && (
-              <Sticky
-                className="sticky"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                {type}
-              </Sticky>
-            )}
-          </AnimatePresence>
-          <InnerHeader isStuck={shouldStick}>
-            <span title={type}>
-              <Badge item={contents} isMap={isSet} isSet={isSet} />
-              <span>
-                {node.key.split(``).map((key: string, index: number) => {
-                  return (
-                    <ItemLetter
-                      highlight={
-                        index >= wordStart &&
-                        index <=
-                          wordStart + (wordToHighlight?.length ?? 1) - 1 &&
-                        searchIsFocused
-                      }
-                      key={index}
-                    >
-                      {key}
-                    </ItemLetter>
-                  )
-                })}
-              </span>
+    <div>
+      <Dummy ref={ref} />
+      <ItemHeader
+        isStuck={shouldStick}
+        onClick={() =>
+          setIsOpen((prev) => ({
+            ...prev,
+            [node.key]: !prev[node.key],
+          }))
+        }
+      >
+        <AnimatePresence>
+          {shouldStick && (
+            <Sticky
+              className="sticky"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              {type}
+            </Sticky>
+          )}
+        </AnimatePresence>
+        <InnerHeader isStuck={shouldStick}>
+          <span title={type}>
+            <Badge item={contents} isMap={isSet} isSet={isSet} />
+            <span>
+              {node.key.split(``).map((key: string, index: number) => {
+                return (
+                  <ItemLetter
+                    highlight={
+                      index >= wordStart &&
+                      index <= wordStart + (wordToHighlight?.length ?? 1) - 1 &&
+                      searchIsFocused
+                    }
+                    key={index}
+                  >
+                    {key}
+                  </ItemLetter>
+                )
+              })}
             </span>
-          </InnerHeader>
-        </ItemHeader>
-        {isOpen[node.key] && (
-          <RecursiveTree
-            key={node.key}
-            branchName={`branch` + node.key}
-            contents={contents}
-          />
-        )}
-      </div>
-    </>
+          </span>
+        </InnerHeader>
+      </ItemHeader>
+      {isOpen[node.key] && (
+        <RecursiveTree
+          key={node.key}
+          branchName={`branch` + node.key}
+          contents={contents}
+        />
+      )}
+    </div>
   )
 }
 
 export default List
+
+const Dummy = styled.div`
+  width: 100px;
+  height: 1px;
+  position: sticky;
+  top: -1px;
+`
 
 const ItemHeader = styled.span<{ isStuck: boolean }>`
   display: inline-block;
