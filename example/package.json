@@ -1,7 +1,7 @@
 {
   "name": "@eyecuelab/recoil-devtools-example",
   "scripts": {
-    "dev": "vite --port 3000"
+    "dev": "vite --port 5175"
   },
   "dependencies": {
     "framer-motion": "^7.2.1",

@@ -78,12 +78,6 @@ const StateItem: FC<{
     contents = Array.from(contents)
   }
 
-  let length = 0
-  if (Array.isArray(contents)) length = contents.length
-  if (typeof contents === `object` && contents) {
-    length = Object.keys(contents).length
-  }
-
   const words = input.split(` `)
   const wordToHighlight = words.find((word) =>
     node.key.toLowerCase().includes(word)
@@ -127,7 +121,7 @@ const StateItem: FC<{
           </AnimatePresence>
           <InnerHeader isStuck={shouldStick}>
             <span title={type}>
-              <Badge length={length} />
+              <Badge item={contents} isMap={isSet} isSet={isSet} />
               <span>
                 {node.key.split(``).map((key: string, index: number) => {
                   return (

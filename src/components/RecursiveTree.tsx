@@ -55,8 +55,12 @@ const RecursiveTree: FC<{ contents: unknown; branchName: string }> = ({
         <>
           <Mark style={{ display: `inline-block` }}>{`{`}</Mark>
           {result.map((item, index) => {
-            if (item.branch instanceof Set || item.branch instanceof Map) {
-              item.branch = Array.from(item.branch)
+            const isMap = item.branch instanceof Map
+            const isSet = item.branch instanceof Set
+            if (isMap || isSet) {
+              item.branch = Array.from(
+                item.branch as Map<unknown, unknown> | Set<unknown>
+              )
             }
 
             const currentDir = `${dir}/${String(item.key)}`
@@ -79,13 +83,7 @@ const RecursiveTree: FC<{ contents: unknown; branchName: string }> = ({
                     }
                   >
                     <>
-                      <Badge
-                        length={
-                          Array.isArray(item.branch)
-                            ? item.branch.length
-                            : Object.keys(item.branch).length
-                        }
-                      />
+                      <Badge item={item.branch} isMap={isMap} isSet={isSet} />
                       {item.key}
                       {isOpen[currentDir] && <Mark>:</Mark>}
                     </>
