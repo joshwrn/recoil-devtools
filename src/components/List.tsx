@@ -2,7 +2,6 @@ import type { FC } from "react"
 import { useState, useMemo, Fragment } from "react"
 
 import { AnimatePresence, motion } from "framer-motion"
-import { BiAtom } from "react-icons/bi"
 import type { RecoilState, RecoilValue, Snapshot } from "recoil"
 import { useRecoilSnapshot, useRecoilState, useRecoilValue } from "recoil"
 import styled from "styled-components"
@@ -54,6 +53,23 @@ const List: FC = () => {
 
   return (
     <Container position={position} transparency={transparency} width={width}>
+      {allAtomFamilies
+        .filter((node) =>
+          userInput
+            .split(` `)
+            .some((phrase) => node[0].toLowerCase().includes(phrase))
+        )
+        .map((node) => {
+          return (
+            <AtomFamilyItem
+              key={`atomFamily:` + node[0]}
+              node={node}
+              snapshot={snapshot}
+              input={userInput}
+              searchIsFocused={searchIsFocused}
+            />
+          )
+        })}
       {allAtoms
         .filter((node) =>
           userInput
@@ -76,23 +92,6 @@ const List: FC = () => {
             </Fragment>
           )
         })}
-      {allAtomFamilies
-        .filter((node) =>
-          userInput
-            .split(` `)
-            .some((phrase) => node[0].toLowerCase().includes(phrase))
-        )
-        .map((node) => {
-          return (
-            <AtomFamilyItem
-              key={`atomFamily:` + node[0]}
-              node={node}
-              snapshot={snapshot}
-              input={userInput}
-              searchIsFocused={searchIsFocused}
-            />
-          )
-        })}
     </Container>
   )
 }
@@ -104,15 +103,12 @@ const AtomFamilyItem: FC<{
   searchIsFocused: any
 }> = ({ snapshot, node, input, searchIsFocused }) => {
   const [isOpen, setIsOpen] = useRecoilState(devItemIsOpenState)
-  const [ref, isStuck] = useSticky()
-  const shouldStick = isStuck && isOpen[node[0]]
 
   return (
     <Fragment key={`frag` + node[0]}>
       <div>
-        <Dummy ref={ref} />
         <ItemHeader
-          isStuck={shouldStick}
+          shouldStick={false}
           onClick={() =>
             setIsOpen((prev) => ({
               ...prev,
@@ -120,19 +116,7 @@ const AtomFamilyItem: FC<{
             }))
           }
         >
-          <AnimatePresence>
-            {shouldStick && (
-              <Sticky
-                className="sticky"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                {`AtomFamily`}
-              </Sticky>
-            )}
-          </AnimatePresence>
-          <InnerHeader isStuck={shouldStick}>
+          <InnerHeader isStuck={false}>
             <Badge isAtomFamily={true} item={node} />
             <span title={`AtomFamily`}>
               <AtomName
@@ -197,7 +181,7 @@ const StateItem: FC<{
     <div>
       <Dummy ref={ref} />
       <ItemHeader
-        isStuck={shouldStick}
+        shouldStick={true}
         onClick={() =>
           setIsOpen((prev) => ({
             ...prev,
@@ -277,9 +261,9 @@ const Dummy = styled.div`
   top: -1px;
 `
 
-const ItemHeader = styled.span<{ isStuck: boolean }>`
+const ItemHeader = styled.span<{ shouldStick: boolean }>`
   display: inline-block;
-  position: sticky;
+  position: ${({ shouldStick }) => (shouldStick ? `sticky` : `relative`)};
   top: 0;
   z-index: 1;
   cursor: pointer;

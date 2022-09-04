@@ -10,7 +10,7 @@ export const fakeState = atom({
     balance: `$3,731.84`,
     picture: `http://placehold.it/32x32`,
     age: 39,
-    eyeColor: `brown`,
+    eyeColor: `blue`,
     name: `Pena Velazquez`,
     gender: `male`,
     company: `LOTRON`,
