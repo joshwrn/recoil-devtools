@@ -2,6 +2,7 @@ import type { FC } from "react"
 import { useState, useMemo, Fragment } from "react"
 
 import { AnimatePresence, motion } from "framer-motion"
+import { BiAtom } from "react-icons/bi"
 import type { RecoilState, RecoilValue, Snapshot } from "recoil"
 import { useRecoilSnapshot, useRecoilState, useRecoilValue } from "recoil"
 import styled from "styled-components"
@@ -34,7 +35,6 @@ const List: FC = () => {
     const atomFamilies: any = new Map()
     const temp: any = []
     list.map((item) => {
-      console.log(item)
       if (item.key.includes(`__`)) {
         const [key, id] = item.key.split(`__`)
         if (!atomFamilies.has(key)) {
@@ -48,7 +48,6 @@ const List: FC = () => {
 
     setAllAtoms(temp)
     setAllAtomFamilies(Array.from(atomFamilies))
-    console.log(Array.from(atomFamilies))
   }, [snapshot, userInput])
 
   snapshot.retain()
@@ -89,7 +88,7 @@ const List: FC = () => {
               key={`atomFamily:` + node[0]}
               node={node}
               snapshot={snapshot}
-              userInput={userInput}
+              input={userInput}
               searchIsFocused={searchIsFocused}
             />
           )
@@ -101,23 +100,50 @@ const List: FC = () => {
 const AtomFamilyItem: FC<{
   snapshot: Snapshot
   node: any
-  userInput: any
+  input: string
   searchIsFocused: any
-}> = ({ snapshot, node, userInput, searchIsFocused }) => {
-  const [isOpen, setIsOpen] = useState(false)
-  const [isSticky, setIsSticky] = useState(false)
+}> = ({ snapshot, node, input, searchIsFocused }) => {
+  const [isOpen, setIsOpen] = useRecoilState(devItemIsOpenState)
+  const [ref, isStuck] = useSticky()
+  const shouldStick = isStuck && isOpen[node[0]]
+
   return (
     <Fragment key={`frag` + node[0]}>
       <div>
-        <span
-          style={{ color: `white` }}
-          onClick={() => setIsOpen((prev) => !prev)}
+        <Dummy ref={ref} />
+        <ItemHeader
+          isStuck={shouldStick}
+          onClick={() =>
+            setIsOpen((prev) => ({
+              ...prev,
+              [node[0]]: !prev[node[0]],
+            }))
+          }
         >
-          {` `}
-          {node[0]}
-          {` `}
-        </span>
-        {isOpen && (
+          <AnimatePresence>
+            {shouldStick && (
+              <Sticky
+                className="sticky"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                {`AtomFamily`}
+              </Sticky>
+            )}
+          </AnimatePresence>
+          <InnerHeader isStuck={shouldStick}>
+            <Badge isAtomFamily={true} item={node} />
+            <span title={`AtomFamily`}>
+              <AtomName
+                name={node[0]}
+                input={input}
+                searchIsFocused={searchIsFocused}
+              />
+            </span>
+          </InnerHeader>
+        </ItemHeader>
+        {isOpen[node[0]] && (
           <div
             style={{
               paddingLeft: `10px`,
@@ -129,8 +155,9 @@ const AtomFamilyItem: FC<{
                   key={`state:` + item.key}
                   node={item}
                   snapshot={snapshot}
-                  input={userInput}
+                  input={input}
                   searchIsFocused={searchIsFocused}
+                  isAtomFamily={true}
                 />
               )
             })}
@@ -146,7 +173,8 @@ const StateItem: FC<{
   node: RecoilValue<unknown>
   input: string
   searchIsFocused: boolean
-}> = ({ snapshot, node, input, searchIsFocused }) => {
+  isAtomFamily?: boolean
+}> = ({ snapshot, node, input, searchIsFocused, isAtomFamily }) => {
   let { contents } = snapshot.getLoadable(node)
   const type = Object.prototype.toString.call(contents).slice(8, -1)
   const [ref, isStuck] = useSticky()
@@ -162,11 +190,7 @@ const StateItem: FC<{
     contents = Array.from(contents)
   }
 
-  const words = input.split(` `)
-  const wordToHighlight = words.find((word) =>
-    node.key.toLowerCase().includes(word)
-  )
-  const wordStart = node.key.toLowerCase().indexOf(wordToHighlight || ``)
+  const name = isAtomFamily ? node.key.split(`__`)[1] : node.key
   const shouldStick = isStuck && isOpen[node.key] && (isObject || isArray)
 
   return (
@@ -196,22 +220,11 @@ const StateItem: FC<{
         <InnerHeader isStuck={shouldStick}>
           <span title={type}>
             <Badge item={contents} isMap={isSet} isSet={isSet} />
-            <span>
-              {node.key.split(``).map((key: string, index: number) => {
-                return (
-                  <ItemLetter
-                    highlight={
-                      index >= wordStart &&
-                      index <= wordStart + (wordToHighlight?.length ?? 1) - 1 &&
-                      searchIsFocused
-                    }
-                    key={index}
-                  >
-                    {key}
-                  </ItemLetter>
-                )
-              })}
-            </span>
+            <AtomName
+              name={name}
+              input={input}
+              searchIsFocused={searchIsFocused}
+            />
           </span>
         </InnerHeader>
       </ItemHeader>
@@ -223,6 +236,35 @@ const StateItem: FC<{
         />
       )}
     </div>
+  )
+}
+
+const AtomName: FC<{
+  name: string
+  input: string
+  searchIsFocused: boolean
+}> = ({ name, input, searchIsFocused }) => {
+  const words = input.split(` `)
+  const wordToHighlight = words.find((word) => name.toLowerCase().includes(word))
+  const wordStart = name.toLowerCase().indexOf(wordToHighlight || ``)
+
+  return (
+    <span>
+      {name.split(``).map((key: string, index: number) => {
+        return (
+          <ItemLetter
+            highlight={
+              index >= wordStart &&
+              index <= wordStart + (wordToHighlight?.length ?? 1) - 1 &&
+              searchIsFocused
+            }
+            key={index}
+          >
+            {key}
+          </ItemLetter>
+        )
+      })}
+    </span>
   )
 }
 
