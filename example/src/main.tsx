@@ -16,7 +16,7 @@ import Bg from "./bg.jpg"
 import { fakeState, fakeState2, fakeState3 } from "./fakeState"
 import styled from "styled-components"
 
-const fakeAtomFamily = atomFamily<string[], string[]>({
+const fakeAtomFamily = atomFamily<any, any>({
   key: `fakeAtomFamily`,
   default: [],
 })
@@ -38,8 +38,7 @@ const Example: FC = () => {
   useRecoilValue(fakeState3)
   useRecoilState(fakeAtomFamily(1))
   useRecoilState(fakeAtomFamily(2))
-  const setFamily = useSetRecoilState(fakeAtomFamily(3))
-  setFamily(["a", "b", "c", "d"])
+
   return (
     <Container>
       <RecoilInspector />

@@ -13,7 +13,6 @@ const Badge: FC<{
   let length = 0
   if (itemIsArray) length = item.length
   if (itemIsObject) length = Object.keys(item).length
-  if (!length && length !== 0) return null
 
   let badge = null
   if (isMap) {

@@ -134,7 +134,6 @@ const QuickMenu: FC = () => {
           />
         </PositionIcon>
       </PositionContainer>
-
       <Item
         onClick={() => (setItemsOpenState({}), setQuickMenuOpenState(false))}
       >
