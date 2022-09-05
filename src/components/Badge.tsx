@@ -28,6 +28,7 @@ const Badge: FC<{
     badge = `{${length}}`
   }
 
+  if (!badge) return null
   return (
     <Mark>
       <span className="devtools-badge">{badge}</span>
