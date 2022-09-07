@@ -17,8 +17,12 @@ export const AtomFamilyItem: FC<{
   node: { key: string; contents: RecoilState<unknown>[] }
   input: string
   searchIsFocused: boolean
-}> = ({ snapshot, node, input, searchIsFocused }) => {
+  family?: `AtomFamily` | `SelectorFamily`
+}> = ({ snapshot, node, input, searchIsFocused, family = `AtomFamily` }) => {
   const [isOpen, setIsOpen] = useRecoilState(devItemIsOpenState)
+
+  const isAtomFamily = family === `AtomFamily`
+  const isSelectorFamily = family === `SelectorFamily`
 
   return (
     <Fragment key={`frag` + node.key}>
@@ -33,8 +37,12 @@ export const AtomFamilyItem: FC<{
           }
         >
           <InnerHeader isStuck={false}>
-            <Badge isAtomFamily={true} item={node} />
-            <span title={`AtomFamily`}>
+            <Badge
+              isSelectorFamily={family === `SelectorFamily`}
+              isAtomFamily={family === `AtomFamily`}
+              item={node}
+            />
+            <span title={family}>
               <AtomName
                 name={node.key}
                 input={input}
@@ -57,7 +65,11 @@ export const AtomFamilyItem: FC<{
                   snapshot={snapshot}
                   input={input}
                   searchIsFocused={searchIsFocused}
-                  isAtomFamily={true}
+                  name={
+                    isAtomFamily
+                      ? item.key.split(`__`)[1]
+                      : item.key.split(`__selectorFamily/`)[1]
+                  }
                 />
               )
             })}
@@ -73,8 +85,8 @@ export const StateItem: FC<{
   node: RecoilValue<unknown>
   input: string
   searchIsFocused: boolean
-  isAtomFamily?: boolean
-}> = ({ snapshot, node, input, searchIsFocused, isAtomFamily }) => {
+  name: string
+}> = ({ snapshot, node, input, searchIsFocused, name }) => {
   let { contents } = snapshot.getLoadable(node)
   const type = Object.prototype.toString.call(contents).slice(8, -1)
   const [ref, isStuck] = useSticky()
@@ -90,7 +102,6 @@ export const StateItem: FC<{
     contents = Array.from(contents)
   }
 
-  const name = isAtomFamily ? node.key.split(`__`)[1] : node.key
   const shouldStick = isStuck && isOpen[node.key] && (isObject || isArray)
 
   return (
@@ -144,6 +155,7 @@ export const AtomName: FC<{
   input: string
   searchIsFocused: boolean
 }> = ({ name, input, searchIsFocused }) => {
+  if (!name) return null
   const words = input.split(` `)
   const wordToHighlight = words.find((word) => name.toLowerCase().includes(word))
   const wordStart = name.toLowerCase().indexOf(wordToHighlight || ``)

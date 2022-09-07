@@ -7,7 +7,8 @@ const Badge: FC<{
   isMap?: boolean
   isSet?: boolean
   isAtomFamily?: boolean
-}> = ({ item, isMap, isSet, isAtomFamily }) => {
+  isSelectorFamily?: boolean
+}> = ({ item, isMap, isSet, isAtomFamily, isSelectorFamily }) => {
   const itemIsArray = Array.isArray(item)
   const itemIsObject = typeof item === `object` && !itemIsArray
   let length = 0
@@ -20,7 +21,9 @@ const Badge: FC<{
   } else if (isSet) {
     badge = `Set(${length})`
   } else if (isAtomFamily) {
-    badge = `Family(${length})`
+    badge = `AtomFamily(${length})`
+  } else if (isSelectorFamily) {
+    badge = `SelectorFamily(${length})`
   } else if (itemIsArray) {
     badge = `[${length}]`
   } else if (itemIsObject) {

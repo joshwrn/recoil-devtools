@@ -24,13 +24,23 @@ const List: FC = () => {
   const [allAtomFamilies, setAllAtomFamilies] = useState<
     { key: string; contents: RecoilState<unknown>[] }[]
   >([])
+  const [allSelectorFamilies, setAllSelectorFamilies] = useState<
+    { key: string; contents: RecoilState<unknown>[] }[]
+  >([])
 
   useMemo(() => {
     const list = Array.from(snapshot.getNodes_UNSTABLE())
     const atomFamilies = new Map()
+    const selectorFamilies = new Map()
     const tempAtoms: RecoilValue<unknown>[] = []
     list.map((item) => {
-      if (item.key.includes(`__`)) {
+      if (item.key.includes(`__selectorFamily`)) {
+        const [key, id] = item.key.split(`__selectorFamily`)
+        if (!selectorFamilies.has(key)) {
+          selectorFamilies.set(key, [])
+        }
+        selectorFamilies.get(key).push(item)
+      } else if (item.key.includes(`__`)) {
         const [key, id] = item.key.split(`__`)
         if (!atomFamilies.has(key)) {
           atomFamilies.set(key, [])
@@ -40,12 +50,17 @@ const List: FC = () => {
         tempAtoms.push(item)
       }
     })
-    const tempFamilies = []
+    const tempAtomFamilies = []
+    const tempSelectorFamilies = []
     for (const [key, value] of atomFamilies) {
-      tempFamilies.push({ key, contents: value })
+      tempAtomFamilies.push({ key, contents: value })
+    }
+    for (const [key, value] of selectorFamilies) {
+      tempSelectorFamilies.push({ key, contents: value })
     }
     setAllAtoms(tempAtoms)
-    setAllAtomFamilies(tempFamilies)
+    setAllAtomFamilies(tempAtomFamilies)
+    setAllSelectorFamilies(tempSelectorFamilies)
   }, [snapshot, userInput])
 
   snapshot.retain()
@@ -69,6 +84,7 @@ const List: FC = () => {
                   snapshot={snapshot}
                   input={userInput}
                   searchIsFocused={searchIsFocused}
+                  name={node.key}
                 />
               }
             </Fragment>
@@ -88,6 +104,24 @@ const List: FC = () => {
               snapshot={snapshot}
               input={userInput}
               searchIsFocused={searchIsFocused}
+            />
+          )
+        })}
+      {allSelectorFamilies
+        .filter((node) =>
+          userInput
+            .split(` `)
+            .some((phrase) => node.key.toLowerCase().includes(phrase))
+        )
+        .map((node) => {
+          return (
+            <AtomFamilyItem
+              key={`selectorFamily:` + node.key}
+              node={node}
+              snapshot={snapshot}
+              input={userInput}
+              searchIsFocused={searchIsFocused}
+              family="SelectorFamily"
             />
           )
         })}
