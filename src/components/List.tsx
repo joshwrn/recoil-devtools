@@ -36,16 +36,18 @@ const List: FC = () => {
       item: FamilyItem | RecoilValue<unknown>
     }[] = []
     list.map((item) => {
-      if (item.key.includes(`__selectorFamily`)) {
-        const key = item.key.split(`__selectorFamily`)[0]
+      const splitItem = item.key.split(`__`)
+      if (splitItem.length > 1) {
+        const key = splitItem[0]
         if (!families.has(key)) {
-          families.set(key, { items: [], type: `SelectorFamily` })
-        }
-        families.get(key).items.push(item)
-      } else if (item.key.includes(`__`)) {
-        const key = item.key.split(`__`)[0]
-        if (!families.has(key)) {
-          families.set(key, { items: [], type: `AtomFamily` })
+          let familyType = `AtomFamily`
+          if (item.key.includes(`__selectorFamily`)) {
+            familyType = `SelectorFamily`
+          }
+          families.set(key, {
+            items: [],
+            type: familyType,
+          })
         }
         families.get(key).items.push(item)
       } else {
