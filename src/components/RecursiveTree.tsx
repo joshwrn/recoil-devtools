@@ -15,8 +15,6 @@ const RecursiveTree: FC<{ contents: unknown; branchName: string }> = ({
 
   const createTree = (branch: unknown, dir: string) => {
     // handle array
-    const branchIsObject = typeof branch === `object`
-
     if (branch instanceof Set || branch instanceof Map) {
       branch = Array.from(branch)
     }
@@ -44,7 +42,7 @@ const RecursiveTree: FC<{ contents: unknown; branchName: string }> = ({
     }
 
     // handle object
-    if (branchIsObject) {
+    if (typeof branch === `object`) {
       const result = Object.keys(branch).map(
         (key): { key: number | string | symbol; branch: unknown } => ({
           key: key,
@@ -57,14 +55,18 @@ const RecursiveTree: FC<{ contents: unknown; branchName: string }> = ({
         <>
           <Mark style={{ display: `inline-block` }}>{`{`}</Mark>
           {result.map((item, index) => {
-            const itemIsObject = typeof item.branch === `object`
-            const itemIsArray = Array.isArray(item.branch)
-
-            if (item.branch instanceof Set || item.branch instanceof Map) {
-              item.branch = Array.from(item.branch)
+            const isMap = item.branch instanceof Map
+            const isSet = item.branch instanceof Set
+            if (isMap || isSet) {
+              item.branch = Array.from(
+                item.branch as Map<unknown, unknown> | Set<unknown>
+              )
             }
 
             const currentDir = `${dir}/${String(item.key)}`
+
+            const itemIsObject = typeof item.branch === `object`
+            const itemIsArray = Array.isArray(item.branch)
 
             // handle item in object with nested objects
             if ((itemIsObject || itemIsArray) && item.branch) {
@@ -81,13 +83,7 @@ const RecursiveTree: FC<{ contents: unknown; branchName: string }> = ({
                     }
                   >
                     <>
-                      <Badge
-                        length={
-                          Array.isArray(item.branch)
-                            ? item.branch.length
-                            : Object.keys(item.branch).length
-                        }
-                      />
+                      <Badge item={item.branch} isMap={isMap} isSet={isSet} />
                       {item.key}
                       {isOpen[currentDir] && <Mark>:</Mark>}
                     </>

@@ -36,14 +36,10 @@ const Tools: FC = () => {
       <ResizableContainer>
         <Layer fonts={fonts} fontSize={fontSize}>
           {settingsOpen && <SettingsPage />}
-          {!settingsOpen && (
-            <>
-              <DevtoolsHeader />
-              <Inner width={width} height={height} position={position}>
-                <List />
-              </Inner>
-            </>
-          )}
+          {!settingsOpen && <DevtoolsHeader />}
+          <Inner width={width} height={height} position={position}>
+            <List />
+          </Inner>
         </Layer>
         <Backdrop transparency={transparency} vibrancy={vibrancy} />
       </ResizableContainer>
@@ -117,7 +113,4 @@ const Inner = styled.div<{ height: number; width: number; position: string }>`
   padding-top: 60px;
   padding-left: 5px;
   top: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0px;
 `

@@ -1,6 +1,8 @@
 import type { AtomEffect } from "recoil"
 import { atom, DefaultValue } from "recoil"
 
+import { DEFAULT_SETTINGS } from "../components/Settings"
+
 export const localStorageEffect: <T>(key: string) => AtomEffect<T> =
   (key: string) =>
   ({ setSelf, onSet }) => {
@@ -19,16 +21,7 @@ export const localStorageEffect: <T>(key: string) => AtomEffect<T> =
 
 export const recoilDevToolsSettingsState = atom({
   key: `recoilDevToolsSettingsState`,
-  default: {
-    position: `right`,
-    theme: `Light`,
-    width: 430,
-    height: 430,
-    transparency: 0,
-    vibrancy: 30,
-    fonts: ``,
-    fontSize: 14,
-  },
+  default: DEFAULT_SETTINGS,
   effects: [localStorageEffect(`devToolsSettingsStateStorage`)],
 })
 

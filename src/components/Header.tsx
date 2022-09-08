@@ -1,14 +1,18 @@
 import type { FC } from "react"
 
+import { BiDotsVerticalRounded as DotsIcon } from "react-icons/bi"
+import { GrSettingsOption as SettingsIcon } from "react-icons/gr"
 import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import styled from "styled-components"
 
+import { useOutsideClick } from "../hooks/useOutsideClick"
 import {
   devToolsOpenState,
   devToolsSearchState,
   recoilDevToolsSettingsState,
 } from "../state/storage"
 import { numberToHex } from "../utils/color"
+import QuickMenu, { QuickMenuIsOpenState } from "./QuickMenu"
 import { recoilDevToolSettingsOpenState } from "./Settings"
 
 const Header = styled.div<{ headerTransparency: number; fontSize: number }>`
@@ -32,35 +36,41 @@ const Header = styled.div<{ headerTransparency: number; fontSize: number }>`
     box-sizing: border-box;
     flex-shrink: 0;
     height: 40px;
-    width: calc(100% - 100px);
+    width: calc(100% - 125px);
     padding: 5px 15px;
     border: 1px solid ${({ theme }) => theme.faintOutline};
     background: none;
     border-radius: 7px;
     font-size: 20px;
     color: ${({ theme }) => theme.text};
-    font-size: ${({ fontSize }) => fontSize}px;
+    font-size: 14px !important;
     ::placeholder {
       color: ${({ theme }) => theme.faintText};
     }
   }
-  > div {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 30px;
-    height: 30px;
-    padding: 5px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    border-radius: 50%;
-    background-color: ${({ theme }) => theme.iconBackground}b3;
-    :hover {
-      background-color: ${({ theme }) => theme.iconBackground}e6;
-    }
-    path {
-      stroke: ${({ theme }) => theme.faintText};
-    }
+`
+const Icon = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-radius: 50%;
+  background-color: ${({ theme }) => theme.iconBackground}b3;
+  color: ${({ theme }) => theme.faintText};
+  i {
+    font-size: 14px !important;
+    transform: translate(0.5px, 1px);
+  }
+  :hover {
+    background-color: ${({ theme }) => theme.iconBackground}e6;
+  }
+  path {
+    stroke: ${({ theme }) => theme.faintText};
   }
 `
 
@@ -76,6 +86,10 @@ const DevtoolsHeader: FC = () => {
   const [userInput, setUserInput] = useRecoilState(devToolsSearchState)
   const setSearchIsFocused = useSetRecoilState(searchIsFocusedState)
   const headerTransparency = transparency > 0.3 ? transparency + 0.3 : 0.4
+  const setQuickMenuIsOpen = useSetRecoilState(QuickMenuIsOpenState)
+  const ref = useOutsideClick(() =>
+    setQuickMenuIsOpen(false)
+  ) as React.RefObject<HTMLDivElement>
   return (
     <Header headerTransparency={headerTransparency} fontSize={fontSize}>
       <input
@@ -85,15 +99,24 @@ const DevtoolsHeader: FC = () => {
         onFocus={() => setSearchIsFocused(true)}
         onBlur={() => setSearchIsFocused(false)}
       />
-      <div
+      <div ref={ref} style={{ position: `relative` }}>
+        <Icon
+          onClick={() => setQuickMenuIsOpen((prev) => !prev)}
+          title="Quick Options"
+        >
+          <DotsIcon style={{ transform: `translate(.5px, 0)` }} size={19} />
+        </Icon>
+        <QuickMenu />
+      </div>
+      <Icon
         title="Settings"
         onClick={() => setSettingsOpen((prev: boolean) => !prev)}
       >
-        <i>o</i>
-      </div>
-      <div title="Close" onClick={() => setIsOpen(false)}>
+        <SettingsIcon style={{ transform: `translate(.5px, 0)` }} size={19} />
+      </Icon>
+      <Icon title="Close" onClick={() => setIsOpen(false)}>
         <i>x</i>
-      </div>
+      </Icon>
     </Header>
   )
 }
