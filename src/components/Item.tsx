@@ -12,13 +12,25 @@ import { numberToHex } from "../utils/color"
 import Badge from "./Badge"
 import RecursiveTree from "./RecursiveTree"
 
+export interface FamilyItem {
+  key: string
+  items: RecoilState<unknown>[]
+}
+
 export const AtomFamilyItem: FC<{
   snapshot: Snapshot
-  node: { key: string; contents: RecoilState<unknown>[] }
+  node: FamilyItem | RecoilValue<unknown>
   input: string
   searchIsFocused: boolean
-  family?: `AtomFamily` | `SelectorFamily`
-}> = ({ snapshot, node, input, searchIsFocused, family = `AtomFamily` }) => {
+  family?: string
+}> = ({
+  snapshot,
+  node: item,
+  input,
+  searchIsFocused,
+  family = `AtomFamily`,
+}) => {
+  const node = item as FamilyItem
   const [isOpen, setIsOpen] = useRecoilState(devItemIsOpenState)
 
   const isAtomFamily = family === `AtomFamily`
@@ -38,8 +50,8 @@ export const AtomFamilyItem: FC<{
         >
           <InnerHeader isStuck={false}>
             <Badge
-              isSelectorFamily={family === `SelectorFamily`}
-              isAtomFamily={family === `AtomFamily`}
+              isSelectorFamily={isSelectorFamily}
+              isAtomFamily={isAtomFamily}
               item={node}
             />
             <span title={family}>
@@ -57,7 +69,7 @@ export const AtomFamilyItem: FC<{
               paddingLeft: `10px`,
             }}
           >
-            {node.contents.map((item: RecoilState<unknown>) => {
+            {node.items.map((item: RecoilValue<unknown>) => {
               return (
                 <StateItem
                   key={`state:` + item.key}
@@ -82,12 +94,12 @@ export const AtomFamilyItem: FC<{
 
 export const StateItem: FC<{
   snapshot: Snapshot
-  node: RecoilValue<unknown>
+  node: FamilyItem | RecoilValue<unknown>
   input: string
   searchIsFocused: boolean
   name: string
 }> = ({ snapshot, node, input, searchIsFocused, name }) => {
-  let { contents } = snapshot.getLoadable(node)
+  let { contents } = snapshot.getLoadable(node as RecoilValue<unknown>)
   const type = Object.prototype.toString.call(contents).slice(8, -1)
   const [ref, isStuck] = useSticky()
   const [isOpen, setIsOpen] = useRecoilState(devItemIsOpenState)

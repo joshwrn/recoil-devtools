@@ -11,6 +11,7 @@ import {
 } from "../state/storage"
 import { numberToHex } from "../utils/color"
 import { searchIsFocusedState } from "./Header"
+import type { FamilyItem } from "./Item"
 import { AtomFamilyItem, StateItem } from "./Item"
 
 const List: FC = () => {
@@ -20,48 +21,42 @@ const List: FC = () => {
   const { width, transparency, position } = useRecoilValue(
     recoilDevToolsSettingsState
   )
-  const [allAtoms, setAllAtoms] = useState<RecoilValue<unknown>[]>([])
-  const [allAtomFamilies, setAllAtomFamilies] = useState<
-    { key: string; contents: RecoilState<unknown>[] }[]
-  >([])
-  const [allSelectorFamilies, setAllSelectorFamilies] = useState<
-    { key: string; contents: RecoilState<unknown>[] }[]
+  const [allAtoms, setAllAtoms] = useState<
+    {
+      type: string
+      item: FamilyItem | RecoilValue<unknown>
+    }[]
   >([])
 
   useMemo(() => {
     const list = Array.from(snapshot.getNodes_UNSTABLE())
-    const atomFamilies = new Map()
-    const selectorFamilies = new Map()
-    const tempAtoms: RecoilValue<unknown>[] = []
+    const families = new Map()
+    const temp: {
+      type: string
+      item: FamilyItem | RecoilValue<unknown>
+    }[] = []
     list.map((item) => {
       if (item.key.includes(`__selectorFamily`)) {
-        const [key, id] = item.key.split(`__selectorFamily`)
-        if (!selectorFamilies.has(key)) {
-          selectorFamilies.set(key, [])
+        const key = item.key.split(`__selectorFamily`)[0]
+        if (!families.has(key)) {
+          families.set(key, { items: [], type: `SelectorFamily` })
         }
-        selectorFamilies.get(key).push(item)
+        families.get(key).items.push(item)
       } else if (item.key.includes(`__`)) {
-        const [key, id] = item.key.split(`__`)
-        if (!atomFamilies.has(key)) {
-          atomFamilies.set(key, [])
+        const key = item.key.split(`__`)[0]
+        if (!families.has(key)) {
+          families.set(key, { items: [], type: `AtomFamily` })
         }
-        atomFamilies.get(key).push(item)
+        families.get(key).items.push(item)
       } else {
-        tempAtoms.push(item)
+        temp.push({ type: `Atom`, item })
       }
     })
-    const tempAtomFamilies = []
-    const tempSelectorFamilies = []
-    for (const [key, value] of atomFamilies) {
-      tempAtomFamilies.push({ key, contents: value })
+    for (const [key, value] of families) {
+      temp.push({ type: value.type, item: { key, items: value.items } })
     }
-    for (const [key, value] of selectorFamilies) {
-      tempSelectorFamilies.push({ key, contents: value })
-    }
-    setAllAtoms(tempAtoms)
-    setAllAtomFamilies(tempAtomFamilies)
-    setAllSelectorFamilies(tempSelectorFamilies)
-  }, [snapshot, userInput])
+    setAllAtoms(temp)
+  }, [snapshot])
 
   snapshot.retain()
 
@@ -71,58 +66,32 @@ const List: FC = () => {
         .filter((node) =>
           userInput
             .split(` `)
-            .some((phrase) => node.key.toLowerCase().includes(phrase))
+            .some((phrase) => node.item.key.toLowerCase().includes(phrase))
         )
-        .map((item) => {
-          const node = item
+        .map((node) => {
           return (
-            <Fragment key={`frag` + node.key}>
-              {
+            <Fragment key={`Frag` + node.item.key}>
+              {node.type === `Atom` && (
                 <StateItem
-                  key={`state:` + node.key}
-                  node={node}
+                  key={`State` + node.item.key}
+                  node={node.item}
                   snapshot={snapshot}
                   input={userInput}
                   searchIsFocused={searchIsFocused}
-                  name={node.key}
+                  name={node.item.key}
                 />
-              }
+              )}
+              {node.type.includes(`Family`) && (
+                <AtomFamilyItem
+                  key={node.type + node.item.key}
+                  node={node.item}
+                  snapshot={snapshot}
+                  input={userInput}
+                  searchIsFocused={searchIsFocused}
+                  family={node.type}
+                />
+              )}
             </Fragment>
-          )
-        })}
-      {allAtomFamilies
-        .filter((node) =>
-          userInput
-            .split(` `)
-            .some((phrase) => node.key.toLowerCase().includes(phrase))
-        )
-        .map((node) => {
-          return (
-            <AtomFamilyItem
-              key={`atomFamily:` + node.key}
-              node={node}
-              snapshot={snapshot}
-              input={userInput}
-              searchIsFocused={searchIsFocused}
-            />
-          )
-        })}
-      {allSelectorFamilies
-        .filter((node) =>
-          userInput
-            .split(` `)
-            .some((phrase) => node.key.toLowerCase().includes(phrase))
-        )
-        .map((node) => {
-          return (
-            <AtomFamilyItem
-              key={`selectorFamily:` + node.key}
-              node={node}
-              snapshot={snapshot}
-              input={userInput}
-              searchIsFocused={searchIsFocused}
-              family="SelectorFamily"
-            />
           )
         })}
     </Container>
