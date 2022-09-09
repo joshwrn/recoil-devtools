@@ -1,7 +1,7 @@
 import type { FC } from "react"
 import { useState, useMemo, Fragment } from "react"
 
-import type { RecoilState, RecoilValue } from "recoil"
+import type { RecoilValue } from "recoil"
 import { useRecoilSnapshot, useRecoilValue } from "recoil"
 import styled from "styled-components"
 
