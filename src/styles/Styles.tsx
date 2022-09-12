@@ -15,7 +15,7 @@ export const Null = styled.span`
   color: ${({ theme }) => theme.null};
 `
 export const Undefined = styled.span`
-  color: ${({ theme }) => theme.undefined};
+  color: ${({ theme }) => theme.null};
 `
 export const String = styled.span`
   color: ${({ theme }) => theme.string};
