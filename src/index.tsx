@@ -1,6 +1,22 @@
-import * as React from 'react';
+import type { FC } from "react"
 
-// Delete me
-export const Thing = () => {
-  return <div>Welcome to your first test package.</div>;
-};
+import { Portal } from "react-portal"
+import { useRecoilValue } from "recoil"
+
+import { Tools } from "./App"
+import DevToolsIcon from "./components/Icon"
+import { devToolsOpenState } from "./state/storage"
+
+export const RecoilInspector: FC = () => {
+  const isOpen = useRecoilValue(devToolsOpenState)
+  return (
+    <>
+      <DevToolsIcon />
+      {isOpen && (
+        <Portal>
+          <Tools />
+        </Portal>
+      )}
+    </>
+  )
+}

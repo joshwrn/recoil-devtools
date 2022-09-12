@@ -1,10 +1,13 @@
 {
-  "name": "recoil-inspector",
+  "name": "@eyecuelab/recoil-devtools",
   "version": "0.1.0",
   "license": "MIT",
-  "author": "Josh Warren",
+  "authors": [
+    "joshwrn",
+    "jeremybanka"
+  ],
   "main": "dist/index.js",
-  "module": "dist/recoil-inspector.esm.js",
+  "module": "dist/recoil-devtools.esm.js",
   "typings": "dist/index.d.ts",
   "files": [
     "dist",
@@ -41,12 +44,36 @@
   },
   "size-limit": [
     {
-      "path": "dist/recoil-inspector.cjs.production.min.js",
+      "path": "dist/recoil-devtools.cjs.production.min.js",
       "limit": "10 KB"
     },
     {
-      "path": "dist/recoil-inspector.esm.js",
+      "path": "dist/recoil-devtools.esm.js",
       "limit": "10 KB"
     }
-  ]
+  ],
+  "devDependencies": {
+    "@size-limit/preset-small-lib": "^8.1.0",
+    "@tsconfig/create-react-app": "^1.0.2",
+    "@tsconfig/recommended": "^1.0.1",
+    "@types/react": "^18.0.19",
+    "@types/react-dom": "^18.0.6",
+    "@types/react-portal": "^4.0.4",
+    "@types/styled-components": "^5.1.26",
+    "dts-cli": "^1.6.0",
+    "husky": "^8.0.1",
+    "prettier": "^2.7.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "size-limit": "^8.1.0",
+    "tslib": "^2.4.0",
+    "typescript": "^4.8.3"
+  },
+  "dependencies": {
+    "framer-motion": "^7.3.2",
+    "react-icons": "^4.4.0",
+    "react-portal": "^4.2.2",
+    "recoil": "^0.7.5",
+    "styled-components": "^5.3.5"
+  }
 }
