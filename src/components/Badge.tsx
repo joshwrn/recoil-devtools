@@ -12,6 +12,7 @@ const Badge: FC<{
   const itemIsArray = Array.isArray(item)
   const itemIsObject = typeof item === `object` && !itemIsArray
   let length = 0
+  if (!item || item instanceof Date) return null
   if (itemIsArray) length = item.length
   if (itemIsObject) length = Object.keys(item).length
 

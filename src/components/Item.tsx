@@ -168,6 +168,13 @@ export const AtomName: FC<{
   searchIsFocused: boolean
 }> = ({ name, input, searchIsFocused }) => {
   if (!name) return null
+  if (!input || !searchIsFocused) {
+    return (
+      <span>
+        <ItemLetter highlight={false}>{name}</ItemLetter>
+      </span>
+    )
+  }
   const words = input.split(` `)
   const wordToHighlight = words.find((word) => name.toLowerCase().includes(word))
   const wordStart = name.toLowerCase().indexOf(wordToHighlight || ``)
