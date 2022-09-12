@@ -1,10 +1,6 @@
 import type { FC } from "react"
-import React from "react"
-
-import ReactDOM from "react-dom/client"
 import {
   atom,
-  RecoilRoot,
   TransactionInterface_UNSTABLE,
   useRecoilState,
   useRecoilValue,
@@ -12,7 +8,6 @@ import {
 
 import "./index.css"
 import { RecoilInspector } from "../../."
-// import Bg from './bg.jpg';
 import {
   fakeState,
   fakeState2,
@@ -77,7 +72,6 @@ const Example: FC = () => {
       <p style={{ color: "white" }}>{integer}</p>
       <button onClick={increment}>Increment</button>
       <RecoilInspector />
-      {/* <img src={Bg} /> */}
     </Container>
   )
 }

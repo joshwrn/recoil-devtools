@@ -1,6 +1,6 @@
 {
   "name": "@eyecuelab/recoil-devtools",
-  "version": "0.1.1",
+  "version": "0.1.3",
   "license": "MIT",
   "authors": [
     "joshwrn",
@@ -12,6 +12,18 @@
   "files": [
     "dist",
     "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eyecuelab/recoil-devtools.git"
+  },
+  "keywords": [
+    "recoil",
+    "devtools",
+    "react",
+    "state",
+    "atom",
+    "selector"
   ],
   "scripts": {
     "analyze": "size-limit --why",
