@@ -1,5 +1,9 @@
+# Recoil Devtools
+
 [![npm version](https://badge.fury.io/js/@eyecuelab%2Frecoil-devtools.svg)](https://badge.fury.io/js/@eyecuelab%2Frecoil-devtools)
 ![NPM Downloads](https://img.shields.io/npm/dw/@eyecuelab/recoil-devtools)
+
+[Live Demo](joshwrn.github.io/recoil-devtools/)
 
 # Install
 

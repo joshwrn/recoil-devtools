@@ -16,7 +16,7 @@ interface Theme {
 }
 
 export const devThemes: Record<string, Theme> = {
-  "Light": {
+  Light: {
     key: `blue`,
     string: `#333`,
     number: `blue`,
@@ -32,7 +32,7 @@ export const devThemes: Record<string, Theme> = {
     background: `#ffffff`,
     iconBackground: `#dbdbdb`,
   },
-  "Dark": {
+  Dark: {
     key: `indianred`,
     string: `darkkhaki`,
     number: `deepskyblue`,
@@ -97,7 +97,7 @@ export const devThemes: Record<string, Theme> = {
     background: `#1a1b26`,
     iconBackground: `#13141d`,
   },
-  "Gruvbox": {
+  Gruvbox: {
     key: `#fb4934`,
     string: `#b8bb26`,
     number: `#fabd2f`,
@@ -113,7 +113,7 @@ export const devThemes: Record<string, Theme> = {
     background: `#282828`,
     iconBackground: `#1d1d1d`,
   },
-  "Dracula": {
+  Dracula: {
     key: `#ff79c6`,
     string: `#50fa7b`,
     number: `#f1fa8c`,
@@ -129,7 +129,7 @@ export const devThemes: Record<string, Theme> = {
     background: `#282a36`,
     iconBackground: `#1d1e25`,
   },
-  "Nord": {
+  Nord: {
     key: `#bf616a`,
     string: `#a3be8c`,
     number: `#ebcb8b`,

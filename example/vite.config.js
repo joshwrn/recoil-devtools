@@ -1,11 +1,20 @@
-import { defineConfig } from 'vite';
-import ReactPlugin from 'vite-preset-react';
+import { defineConfig, loadEnv } from "vite"
+import ReactPlugin from "vite-preset-react"
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [
-    ReactPlugin({
-      injectReact: false,
-    }),
-  ],
-});
+export default ({ mode }) => {
+  process.env = { ...process.env, ...loadEnv(mode, process.cwd()) }
+  return defineConfig({
+    plugins: [
+      ReactPlugin({
+        injectReact: process.env.VITE_NODE_ENV === "production" ? true : false,
+      }),
+    ],
+    base: "/recoil-devtools/",
+    server: {
+      fs: {
+        allow: [".."],
+      },
+    },
+  })
+}
