@@ -4,12 +4,14 @@ import ReactDOM from "react-dom/client"
 import Example from "./src/App"
 
 import { RecoilRoot } from "recoil"
+import { RecoilInspector } from "../."
 
 const App = () => {
   return (
     <RecoilRoot>
       <React.StrictMode>
         <Example />
+        <RecoilInspector />
       </React.StrictMode>
     </RecoilRoot>
   )

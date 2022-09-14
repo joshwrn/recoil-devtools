@@ -14,6 +14,11 @@ import { searchIsFocusedState } from "./Header"
 import type { FamilyItem } from "./Item"
 import { AtomFamilyItem, StateItem } from "./Item"
 
+type Item = {
+  type: string
+  item: FamilyItem | RecoilValue<unknown>
+}
+
 const List: FC = () => {
   const snapshot = useRecoilSnapshot()
   const userInput = useRecoilValue(devToolsSearchState)
@@ -21,20 +26,12 @@ const List: FC = () => {
   const { width, transparency, position } = useRecoilValue(
     recoilDevToolsSettingsState
   )
-  const [allAtoms, setAllAtoms] = useState<
-    {
-      type: string
-      item: FamilyItem | RecoilValue<unknown>
-    }[]
-  >([])
+  const [allAtoms, setAllAtoms] = useState<Item[]>([])
 
   useMemo(() => {
     const list = Array.from(snapshot.getNodes_UNSTABLE())
     const families = new Map()
-    const temp: {
-      type: string
-      item: FamilyItem | RecoilValue<unknown>
-    }[] = []
+    const temp: Item[] = []
     list.map((item) => {
       const splitItem = item.key.split(`__`)
       if (splitItem.length > 1) {

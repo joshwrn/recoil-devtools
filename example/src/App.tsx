@@ -1,4 +1,4 @@
-import type { FC } from "react"
+import { FC, useEffect } from "react"
 import {
   atom,
   TransactionInterface_UNSTABLE,
@@ -7,11 +7,10 @@ import {
 } from "recoil"
 
 import "./index.css"
-import { RecoilInspector } from "../../."
 import {
   fakeState,
-  fakeState2,
-  fakeState3,
+  undefinedData,
+  fakeUsers,
   fakeAtomFamily,
   fakeSelectorFamily,
 } from "./fakeState"
@@ -29,50 +28,107 @@ const integerState = atom({
   default: 0,
 })
 
-export const incrementInteger: TransactionOperation = ({ set, get }) => {
-  set(integerState, get(integerState) + 1)
+export const incrementInteger: TransactionOperation<string> = (
+  { set, get },
+  operation
+) => {
+  switch (operation) {
+    case "add":
+      set(integerState, get(integerState) + 1)
+      break
+    case "subtract":
+      set(integerState, get(integerState) - 1)
+      break
+    case "reset":
+      set(integerState, 0)
+      break
+    default:
+      break
+  }
 }
 
-export const useIncrementInteger = (): VoidFunction =>
+export const useIncrementInteger = (operation: string): VoidFunction =>
   useRecoilTransaction_UNSTABLE(
-    (transactors) => () => incrementInteger(transactors)
+    (transactors) => () => incrementInteger(transactors, operation)
   )
 
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+`
 const Container = styled.div`
   display: flex;
-  width: 100vw;
-  height: 100vh;
-  justify-content: flex-start;
+  flex-direction: column;
+  width: fit-content;
+  height: 200px;
+  justify-content: center;
   align-items: center;
-  padding: 100px;
-  img {
+  padding: 30px;
+  background: linear-gradient(to bottom right, #0000002d, #000000c4);
+  border-radius: 20px;
+  gap: 20px;
+  border: 1px solid #ffffff22;
+  p {
+    font-size: 24px;
+    color: #ffffff95;
+    font-family: "Roboto", sans-serif;
+  }
+  button {
+    outline: none;
+    border: 1px solid #ffffff10;
+    background: #00000024;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-family: "Roboto", sans-serif;
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
+    color: #ffffff95;
+    &:hover {
+      background: #00000036;
+    }
+  }
+  > div {
+    display: flex;
+    gap: 10px;
     width: 100%;
-    left: 0;
-    top: 0;
-    position: absolute;
-    z-index: -1;
-    height: 100%;
-    object-fit: cover;
+    justify-content: center;
+    align-items: center;
   }
 `
 
 const Example: FC = () => {
+  useRecoilValue(undefinedData)
   useRecoilValue(fakeState)
-  useRecoilValue(fakeState2)
-  useRecoilValue(fakeState3)
+  useRecoilValue(fakeUsers)
   useRecoilState(fakeAtomFamily(1))
   useRecoilState(fakeAtomFamily(2))
   useRecoilValue(fakeSelectorFamily([1, 2]))
 
   const integer = useRecoilValue(integerState)
-  const increment = useIncrementInteger()
+  const increment = useIncrementInteger("add")
+  const decrement = useIncrementInteger("subtract")
+  const reset = useIncrementInteger("reset")
+
+  useEffect(() => {
+    localStorage.setItem(`devToolsOpen`, JSON.stringify(true))
+  })
 
   return (
-    <Container>
-      <p style={{ color: "white" }}>{integer}</p>
-      <button onClick={increment}>Increment</button>
-      <RecoilInspector />
-    </Container>
+    <Wrapper>
+      <Container>
+        <p>{integer}</p>
+        <div>
+          <button onClick={increment}>Increment</button>
+          <button onClick={decrement}>Decrement</button>
+          <button onClick={reset}>Reset</button>
+        </div>
+      </Container>
+    </Wrapper>
   )
 }
 
