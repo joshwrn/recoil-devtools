@@ -110,8 +110,8 @@ export const StateItem: FC<{
   const isSet = contents instanceof Set
   const isMap = contents instanceof Map
 
-  if (isSet || isMap) {
-    contents = Array.from(contents)
+  if (isMap || isSet) {
+    contents = Array.from(contents as Map<unknown, unknown> | Set<unknown>)
   }
 
   const shouldStick = isStuck && isOpen[node.key] && (isObject || isArray)
@@ -142,7 +142,7 @@ export const StateItem: FC<{
         </AnimatePresence>
         <InnerHeader isStuck={shouldStick}>
           <span title={type}>
-            <Badge item={contents} isMap={isSet} isSet={isSet} />
+            <Badge item={contents} isMap={isMap} isSet={isSet} />
             <AtomName
               name={name}
               input={input}

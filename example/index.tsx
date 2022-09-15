@@ -5,6 +5,7 @@ import Example from "./src/App"
 
 import { RecoilRoot } from "recoil"
 import { RecoilInspector } from "../."
+// import { RecoilInspector } from "../src/index"
 
 const App = () => {
   return (

@@ -13,6 +13,8 @@ import {
   fakeUsers,
   fakeAtomFamily,
   fakeSelectorFamily,
+  setExampleState,
+  mapExampleState,
 } from "./fakeState"
 import styled from "styled-components"
 
@@ -72,6 +74,7 @@ const Container = styled.div`
   border-radius: 20px;
   gap: 20px;
   border: 1px solid #ffffff22;
+  box-shadow: 0 7px 20px 0px rgba(0, 0, 0, 0.4);
   p {
     font-size: 24px;
     color: #ffffff95;
@@ -105,6 +108,8 @@ const Example: FC = () => {
   useRecoilValue(undefinedData)
   useRecoilValue(fakeState)
   useRecoilValue(fakeUsers)
+  useRecoilValue(setExampleState)
+  useRecoilValue(mapExampleState)
   useRecoilState(fakeAtomFamily(1))
   useRecoilState(fakeAtomFamily(2))
   useRecoilValue(fakeSelectorFamily([1, 2]))

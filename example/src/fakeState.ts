@@ -10,6 +10,21 @@ export const fakeSelectorFamily = selectorFamily<any, any>({
   get: () => () => {},
 })
 
+export const undefinedData = atom({
+  key: `undefinedData`,
+  default: undefined,
+})
+
+export const setExampleState = atom({
+  key: `setExample`,
+  default: new Set(),
+})
+
+export const mapExampleState = atom({
+  key: `mapExample`,
+  default: new Map(),
+})
+
 export const fakeState = atom({
   key: `fakeData`,
   default: {
@@ -129,11 +144,6 @@ export const fakeState = atom({
       },
     ],
   },
-})
-
-export const undefinedData = atom({
-  key: `undefinedData`,
-  default: undefined,
 })
 
 export const fakeUsers = atom({
