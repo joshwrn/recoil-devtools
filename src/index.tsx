@@ -11,12 +11,10 @@ export const RecoilInspector: FC = () => {
   const isOpen = useRecoilValue(devToolsOpenState)
   return (
     <>
-      <DevToolsIcon />
-      {isOpen && (
-        <Portal>
-          <Tools />
-        </Portal>
-      )}
+      <Portal>
+        <DevToolsIcon />
+        {isOpen && <Tools />}
+      </Portal>
     </>
   )
 }

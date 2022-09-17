@@ -19,7 +19,7 @@ const RecoilIcon = styled.button<{
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  z-index: 20000;
+  z-index: 2147483647;
   pointer-events: all;
   border-radius: 50%;
   background: #ffffff78;

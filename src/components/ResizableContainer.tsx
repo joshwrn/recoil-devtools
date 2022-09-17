@@ -74,7 +74,7 @@ const LayerContainer = styled(motion.div)<{
   display: flex;
   flex-direction: column;
   align-items: center;
-  z-index: 20000;
+  z-index: 2147483647;
 `
 
 const ResizableContainer: FC<{

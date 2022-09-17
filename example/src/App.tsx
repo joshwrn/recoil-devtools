@@ -1,4 +1,4 @@
-import { FC, useEffect } from "react"
+import { FC } from "react"
 import {
   atom,
   TransactionInterface_UNSTABLE,
@@ -118,10 +118,6 @@ const Example: FC = () => {
   const increment = useIncrementInteger("add")
   const decrement = useIncrementInteger("subtract")
   const reset = useIncrementInteger("reset")
-
-  useEffect(() => {
-    localStorage.setItem(`devToolsOpen`, JSON.stringify(true))
-  })
 
   return (
     <Wrapper>
