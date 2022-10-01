@@ -7,7 +7,7 @@ import { useRecoilState } from "recoil"
 import styled from "styled-components"
 
 import useSticky from "../hooks/useSticky"
-import { devItemIsOpenState } from "../state/storage"
+import { openItemsState } from "../state/storage"
 import { numberToHex } from "../utils/color"
 import Badge from "./Badge"
 import RecursiveTree from "./RecursiveTree"
@@ -21,17 +21,10 @@ export const AtomFamilyItem: FC<{
   snapshot: Snapshot
   node: FamilyItem | RecoilValue<unknown>
   input: string
-  searchIsFocused: boolean
   family?: string
-}> = ({
-  snapshot,
-  node: item,
-  input,
-  searchIsFocused,
-  family = `AtomFamily`,
-}) => {
+}> = ({ snapshot, node: item, input, family = `AtomFamily` }) => {
   const node = item as FamilyItem
-  const [isOpen, setIsOpen] = useRecoilState(devItemIsOpenState)
+  const [isOpen, setIsOpen] = useRecoilState(openItemsState)
 
   const isAtomFamily = family === `AtomFamily`
   const isSelectorFamily = family === `SelectorFamily`
@@ -55,11 +48,7 @@ export const AtomFamilyItem: FC<{
               item={node}
             />
             <span title={family}>
-              <AtomName
-                name={node.key}
-                input={input}
-                searchIsFocused={searchIsFocused}
-              />
+              <AtomName name={node.key} input={input} />
             </span>
           </InnerHeader>
         </ItemHeader>
@@ -76,7 +65,6 @@ export const AtomFamilyItem: FC<{
                   node={item}
                   snapshot={snapshot}
                   input={input}
-                  searchIsFocused={searchIsFocused}
                   name={
                     isAtomFamily
                       ? item.key.split(`__`)[1]
@@ -96,13 +84,12 @@ export const StateItem: FC<{
   snapshot: Snapshot
   node: FamilyItem | RecoilValue<unknown>
   input: string
-  searchIsFocused: boolean
   name: string
-}> = ({ snapshot, node, input, searchIsFocused, name }) => {
+}> = ({ snapshot, node, input, name }) => {
   let { contents } = snapshot.getLoadable(node as RecoilValue<unknown>)
   const type = Object.prototype.toString.call(contents).slice(8, -1)
   const [ref, isStuck] = useSticky()
-  const [isOpen, setIsOpen] = useRecoilState(devItemIsOpenState)
+  const [isOpen, setIsOpen] = useRecoilState(openItemsState)
 
   const isDate = contents instanceof Date
   const isObject = typeof contents === `object` && contents && !isDate
@@ -143,11 +130,7 @@ export const StateItem: FC<{
         <InnerHeader isStuck={shouldStick}>
           <span title={type}>
             <Badge item={contents} isMap={isMap} isSet={isSet} />
-            <AtomName
-              name={name}
-              input={input}
-              searchIsFocused={searchIsFocused}
-            />
+            <AtomName name={name} input={input} />
           </span>
         </InnerHeader>
       </ItemHeader>
@@ -165,16 +148,16 @@ export const StateItem: FC<{
 export const AtomName: FC<{
   name: string
   input: string
-  searchIsFocused: boolean
-}> = ({ name, input, searchIsFocused }) => {
+}> = ({ name, input }) => {
   if (!name) return null
-  if (!input || !searchIsFocused) {
+  if (!input) {
     return (
       <span>
         <ItemLetter highlight={false}>{name}</ItemLetter>
       </span>
     )
   }
+
   const words = input.split(` `)
   const wordToHighlight = words.find((word) => name.toLowerCase().includes(word))
   const wordStart = name.toLowerCase().indexOf(wordToHighlight || ``)
@@ -186,8 +169,7 @@ export const AtomName: FC<{
           <ItemLetter
             highlight={
               index >= wordStart &&
-              index <= wordStart + (wordToHighlight?.length ?? 1) - 1 &&
-              searchIsFocused
+              index <= wordStart + (wordToHighlight?.length ?? 1) - 1
             }
             key={index}
           >

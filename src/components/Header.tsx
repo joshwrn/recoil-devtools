@@ -3,18 +3,14 @@ import type { FC } from "react"
 import { BiDotsVerticalRounded as DotsIcon } from "react-icons/bi"
 import { GrSettingsOption as SettingsIcon } from "react-icons/gr"
 import { IoCloseSharp as CloseIcon } from "react-icons/io5"
-import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import styled from "styled-components"
 
 import { useOutsideClick } from "../hooks/useOutsideClick"
-import {
-  devToolsOpenState,
-  devToolsSearchState,
-  recoilDevToolsSettingsState,
-} from "../state/storage"
+import { devToolsOpenState, searchState, settingsState } from "../state/storage"
 import { numberToHex } from "../utils/color"
 import QuickMenu, { QuickMenuIsOpenState } from "./QuickMenu"
-import { recoilDevToolSettingsOpenState } from "./Settings"
+import { isSettingsOpenState } from "./Settings"
 
 const Header = styled.div<{ headerTransparency: number; fontSize: number }>`
   box-sizing: border-box;
@@ -75,30 +71,23 @@ const Icon = styled.div`
   }
 `
 
-export const searchIsFocusedState = atom({
-  key: `searchIsFocused`,
-  default: false,
-})
-
 const DevtoolsHeader: FC = () => {
-  const setSettingsOpen = useSetRecoilState(recoilDevToolSettingsOpenState)
-  const { transparency, fontSize } = useRecoilValue(recoilDevToolsSettingsState)
+  const setSettingsOpen = useSetRecoilState(isSettingsOpenState)
+  const { transparency, fontSize } = useRecoilValue(settingsState)
   const setIsOpen = useSetRecoilState(devToolsOpenState)
-  const [userInput, setUserInput] = useRecoilState(devToolsSearchState)
-  const setSearchIsFocused = useSetRecoilState(searchIsFocusedState)
+  const [userInput, setUserInput] = useRecoilState(searchState)
   const headerTransparency = transparency > 0.3 ? transparency + 0.3 : 0.4
   const setQuickMenuIsOpen = useSetRecoilState(QuickMenuIsOpenState)
   const ref = useOutsideClick(() =>
     setQuickMenuIsOpen(false)
   ) as React.RefObject<HTMLDivElement>
+
   return (
     <Header headerTransparency={headerTransparency} fontSize={fontSize}>
       <input
         value={userInput}
         onChange={(e) => setUserInput(e.target.value.toLowerCase())}
         placeholder="Search"
-        onFocus={() => setSearchIsFocused(true)}
-        onBlur={() => setSearchIsFocused(false)}
       />
       <div ref={ref} style={{ position: `relative` }}>
         <Icon

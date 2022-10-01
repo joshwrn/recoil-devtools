@@ -1,7 +1,7 @@
 import type { AtomEffect } from "recoil"
 import { atom, DefaultValue } from "recoil"
 
-import { DEFAULT_SETTINGS } from "../components/Settings"
+import { defaultSettingsState } from "../components/Settings"
 
 export const localStorageEffect: <T>(key: string) => AtomEffect<T> =
   (key: string) =>
@@ -20,9 +20,9 @@ export const localStorageEffect: <T>(key: string) => AtomEffect<T> =
     })
   }
 
-export const recoilDevToolsSettingsState = atom({
+export const settingsState = atom({
   key: `recoilDevToolsSettingsState`,
-  default: DEFAULT_SETTINGS,
+  default: defaultSettingsState,
   effects: [localStorageEffect(`devToolsSettingsStateStorage`)],
 })
 
@@ -32,13 +32,13 @@ export const devToolsOpenState = atom({
   effects: [localStorageEffect(`devToolsOpen`)],
 })
 
-export const devToolsSearchState = atom({
+export const searchState = atom({
   key: `devToolsSearch`,
   default: ``,
   effects: [localStorageEffect(`devToolsSearchState`)],
 })
 
-export const devItemIsOpenState = atom<Storage>({
+export const openItemsState = atom<Storage>({
   key: `devItemIsOpenState`,
   default: {},
   effects: [localStorageEffect(`devItemIsOpenState`)],

@@ -5,10 +5,7 @@ import { VscCloseAll } from "react-icons/vsc"
 import { atom, useRecoilValue, useSetRecoilState } from "recoil"
 import styled from "styled-components"
 
-import {
-  devItemIsOpenState,
-  recoilDevToolsSettingsState,
-} from "../state/storage"
+import { openItemsState, settingsState } from "../state/storage"
 import { numberToHex } from "../utils/color"
 
 const Container = styled.div`
@@ -51,7 +48,7 @@ const Container = styled.div`
 `
 
 export const QuickMenuIsOpenState = atom({
-  key: `QuickMenuIsOpenState`,
+  key: `recoilDevToolsQuickMenuIsOpenState`,
   default: false,
 })
 
@@ -102,9 +99,9 @@ const PositionIcon = styled.div`
 `
 
 const QuickMenu: FC = () => {
-  const setItemsOpenState = useSetRecoilState(devItemIsOpenState)
+  const setItemsOpenState = useSetRecoilState(openItemsState)
   const setQuickMenuOpenState = useSetRecoilState(QuickMenuIsOpenState)
-  const settings = useSetRecoilState(recoilDevToolsSettingsState)
+  const settings = useSetRecoilState(settingsState)
   if (!useRecoilValue(QuickMenuIsOpenState)) return null
   return (
     <Container>

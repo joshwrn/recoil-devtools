@@ -6,16 +6,15 @@ import styled, { ThemeProvider } from "styled-components"
 import DevtoolsHeader from "./components/Header"
 import List from "./components/List"
 import ResizableContainer from "./components/ResizableContainer"
-import SettingsPage, {
-  recoilDevToolSettingsOpenState,
-} from "./components/Settings"
-import { recoilDevToolsSettingsState } from "./state/storage"
+import SettingsPage, { isSettingsOpenState } from "./components/Settings"
+import { settingsState } from "./state/storage"
 import { globalStyle } from "./styles/globalStyle"
 import { devThemes } from "./styles/themes"
 import { numberToHex } from "./utils/color"
 
 export const Tools: FC = () => {
-  const settingsOpen = useRecoilValue(recoilDevToolSettingsOpenState)
+  const settingsOpen = useRecoilValue(isSettingsOpenState)
+
   const {
     theme,
     transparency,
@@ -25,7 +24,7 @@ export const Tools: FC = () => {
     vibrancy,
     fonts,
     fontSize,
-  } = useRecoilValue(recoilDevToolsSettingsState)
+  } = useRecoilValue(settingsState)
 
   return (
     <ThemeProvider theme={devThemes[theme] ?? devThemes[`Light`]}>

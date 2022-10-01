@@ -6,7 +6,7 @@ import { motion, useMotionValue } from "framer-motion"
 import { useRecoilState } from "recoil"
 import styled, { css } from "styled-components"
 
-import { recoilDevToolsSettingsState } from "../state/storage"
+import { settingsState } from "../state/storage"
 
 export const HANDLE_SIZE = 10
 
@@ -80,9 +80,8 @@ const LayerContainer = styled(motion.div)<{
 const ResizableContainer: FC<{
   children: React.ReactNode
 }> = ({ children }) => {
-  const [{ position, width, height }, setSettings] = useRecoilState(
-    recoilDevToolsSettingsState
-  )
+  const [{ position, width, height }, setSettings] =
+    useRecoilState(settingsState)
 
   const mWidth = useMotionValue(width)
   const mHeight = useMotionValue(height)

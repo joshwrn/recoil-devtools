@@ -2,7 +2,7 @@ import type { FC } from "react"
 
 import { useRecoilState } from "recoil"
 
-import { devItemIsOpenState } from "../state/storage"
+import { openItemsState } from "../state/storage"
 import { Mark, Key, Box } from "../styles/Styles"
 import Badge from "./Badge"
 import Primitive from "./Primitive"
@@ -11,7 +11,7 @@ const RecursiveTree: FC<{ contents: unknown; branchName: string }> = ({
   contents,
   branchName,
 }) => {
-  const [isOpen, toggleItemOpen] = useRecoilState(devItemIsOpenState)
+  const [isOpen, toggleItemOpen] = useRecoilState(openItemsState)
 
   const createTree = (branch: unknown, dir: string) => {
     // handle array

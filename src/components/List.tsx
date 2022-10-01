@@ -5,12 +5,8 @@ import type { RecoilValue } from "recoil"
 import { useRecoilSnapshot, useRecoilValue } from "recoil"
 import styled from "styled-components"
 
-import {
-  devToolsSearchState,
-  recoilDevToolsSettingsState,
-} from "../state/storage"
+import { searchState, settingsState } from "../state/storage"
 import { numberToHex } from "../utils/color"
-import { searchIsFocusedState } from "./Header"
 import type { FamilyItem } from "./Item"
 import { AtomFamilyItem, StateItem } from "./Item"
 
@@ -21,11 +17,8 @@ type Item = {
 
 const List: FC = () => {
   const snapshot = useRecoilSnapshot()
-  const userInput = useRecoilValue(devToolsSearchState)
-  const searchIsFocused = useRecoilValue(searchIsFocusedState)
-  const { width, transparency, position } = useRecoilValue(
-    recoilDevToolsSettingsState
-  )
+  const userInput = useRecoilValue(searchState)
+  const { width, transparency, position } = useRecoilValue(settingsState)
   const [allAtoms, setAllAtoms] = useState<Item[]>([])
 
   useMemo(() => {
@@ -69,24 +62,20 @@ const List: FC = () => {
         )
         .map((node) => {
           return (
-            <Fragment key={`Frag` + node.item.key}>
+            <Fragment key={`list-` + node.item.key + node.type}>
               {node.type === `Atom` && (
                 <StateItem
-                  key={`State` + node.item.key}
                   node={node.item}
                   snapshot={snapshot}
                   input={userInput}
-                  searchIsFocused={searchIsFocused}
                   name={node.item.key}
                 />
               )}
               {node.type.includes(`Family`) && (
                 <AtomFamilyItem
-                  key={node.type + node.item.key}
                   node={node.item}
                   snapshot={snapshot}
                   input={userInput}
-                  searchIsFocused={searchIsFocused}
                   family={node.type}
                 />
               )}

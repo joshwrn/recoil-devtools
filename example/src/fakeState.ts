@@ -17,12 +17,15 @@ export const undefinedData = atom({
 
 export const setExampleState = atom({
   key: `setExample`,
-  default: new Set(),
+  default: new Set(["a", "b", "c"]),
 })
 
 export const mapExampleState = atom({
   key: `mapExample`,
-  default: new Map(),
+  default: new Map([
+    ["a", "b"],
+    ["c", "d"],
+  ]),
 })
 
 export const fakeState = atom({

@@ -3,10 +3,21 @@ import type { FC } from "react"
 import { atom, useRecoilState, useSetRecoilState } from "recoil"
 import styled from "styled-components"
 
-import { recoilDevToolsSettingsState } from "../state/storage"
+import { settingsState } from "../state/storage"
 import { devThemes } from "../styles/themes"
 import { HANDLE_SIZE } from "./ResizableContainer"
 /* eslint-disable max-lines */
+
+export interface Settings {
+  theme: string
+  transparency: number
+  position: string
+  height: number
+  width: number
+  vibrancy: number
+  fonts: string
+  fontSize: number
+}
 
 export const DEFAULT_SETTINGS = {
   position: `right`,
@@ -18,6 +29,11 @@ export const DEFAULT_SETTINGS = {
   fonts: ``,
   fontSize: 14,
 }
+
+export const defaultSettingsState = atom<Settings>({
+  key: `recoilDevToolsDefaultSettings`,
+  default: DEFAULT_SETTINGS,
+})
 
 const Container = styled.div<{
   height: number
@@ -162,7 +178,7 @@ export interface DevToolSettings {
   fontSize: number
 }
 
-export const recoilDevToolSettingsOpenState = atom({
+export const isSettingsOpenState = atom({
   key: `devToolSettingsOpen`,
   default: false,
 })
@@ -171,9 +187,9 @@ const SettingsPage: FC = () => {
   const [
     { position, theme, transparency, vibrancy, fonts, fontSize, height },
     setSettings,
-  ] = useRecoilState(recoilDevToolsSettingsState)
+  ] = useRecoilState(settingsState)
 
-  const setOpen = useSetRecoilState(recoilDevToolSettingsOpenState)
+  const setOpen = useSetRecoilState(isSettingsOpenState)
   return (
     <Container height={height} position={position} fontSize={fontSize}>
       <div className="devSettingsTop">
