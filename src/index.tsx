@@ -1,13 +1,14 @@
-import { FC, useEffect } from "react"
+import type { FC } from "react"
+import { useEffect } from "react"
 
 import { Portal } from "react-portal"
 import { useRecoilValue, useSetRecoilState } from "recoil"
 
 import { Tools } from "./App"
 import DevToolsIcon from "./components/Icon"
-import { defaultSettingsState, Settings } from "./components/Settings"
+import type { Settings } from "./components/Settings"
+import { defaultSettingsState, DEFAULT_SETTINGS } from "./components/Settings"
 import { devToolsOpenState } from "./state/storage"
-import { DEFAULT_SETTINGS } from "./components/Settings"
 
 export const RecoilInspector: FC<{ defaultSettings?: Partial<Settings> }> = ({
   defaultSettings,

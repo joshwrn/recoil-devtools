@@ -27,7 +27,7 @@
   "scripts": {
     "analyze": "size-limit --why",
     "build": "dts build",
-    "lint": "dts lint",
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx --ignore-path .gitignore .",
     "prepare": "dts build",
     "size": "size-limit",
     "start": "dts watch",
@@ -64,6 +64,7 @@
     }
   ],
   "devDependencies": {
+    "@eyecuelab/eslint-config-react": "^1.0.2",
     "@size-limit/preset-small-lib": "^8.1.0",
     "@tsconfig/create-react-app": "^1.0.2",
     "@tsconfig/recommended": "^1.0.1",
@@ -71,7 +72,16 @@
     "@types/react-dom": "^18.0.6",
     "@types/react-portal": "^4.0.4",
     "@types/styled-components": "^5.1.26",
+    "@typescript-eslint/eslint-plugin": "^5.40.0",
+    "@typescript-eslint/parser": "^5.40.0",
     "dts-cli": "^1.6.0",
+    "eslint": "^8.25.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jest": "^27.1.1",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.31.10",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "husky": "^8.0.1",
     "prettier": "^2.7.1",
     "react": "^18.2.0",

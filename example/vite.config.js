@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { defineConfig, loadEnv } from "vite"
 import ReactPlugin from "vite-preset-react"
 
@@ -7,13 +8,13 @@ export default ({ mode }) => {
   return defineConfig({
     plugins: [
       ReactPlugin({
-        injectReact: process.env.VITE_NODE_ENV === "production" ? true : false,
+        injectReact: process.env.VITE_NODE_ENV === `production` ? true : false,
       }),
     ],
-    base: "/recoil-devtools/",
+    base: `/recoil-devtools/`,
     server: {
       fs: {
-        allow: [".."],
+        allow: [`..`],
       },
     },
   })

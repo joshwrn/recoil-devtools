@@ -1,3 +1,4 @@
+/* eslint-disable quote-props */
 interface Theme {
   key: string
   string: string

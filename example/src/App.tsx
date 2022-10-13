@@ -1,12 +1,17 @@
-import { FC } from "react"
+import type { FC } from "react"
+
+import type { TransactionInterface_UNSTABLE } from "recoil"
+// eslint-disable-next-line import/order
 import {
   atom,
-  TransactionInterface_UNSTABLE,
   useRecoilState,
   useRecoilValue,
+  useRecoilTransaction_UNSTABLE,
 } from "recoil"
 
 import "./index.css"
+import styled from "styled-components"
+
 import {
   fakeState,
   undefinedData,
@@ -16,9 +21,6 @@ import {
   setExampleState,
   mapExampleState,
 } from "./fakeState"
-import styled from "styled-components"
-
-import { useRecoilTransaction_UNSTABLE } from "recoil"
 
 export type TransactionOperation<ARG = undefined, RETURN = void> = (
   transactors: TransactionInterface_UNSTABLE,
@@ -35,13 +37,13 @@ export const incrementInteger: TransactionOperation<string> = (
   operation
 ) => {
   switch (operation) {
-    case "add":
+    case `add`:
       set(integerState, get(integerState) + 1)
       break
-    case "subtract":
+    case `subtract`:
       set(integerState, get(integerState) - 1)
       break
-    case "reset":
+    case `reset`:
       set(integerState, 0)
       break
     default:
@@ -115,9 +117,9 @@ const Example: FC = () => {
   useRecoilValue(fakeSelectorFamily([1, 2]))
 
   const integer = useRecoilValue(integerState)
-  const increment = useIncrementInteger("add")
-  const decrement = useIncrementInteger("subtract")
-  const reset = useIncrementInteger("reset")
+  const increment = useIncrementInteger(`add`)
+  const decrement = useIncrementInteger(`subtract`)
+  const reset = useIncrementInteger(`reset`)
 
   return (
     <Wrapper>
