@@ -64,6 +64,7 @@
     }
   ],
   "devDependencies": {
+    "@changesets/cli": "^2.26.0",
     "@eyecuelab/eslint-config-react": "^1.0.2",
     "@size-limit/preset-small-lib": "^8.1.0",
     "@tsconfig/create-react-app": "^1.0.2",
