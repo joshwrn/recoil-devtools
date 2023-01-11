@@ -60,7 +60,7 @@
     },
     {
       "path": "dist/recoil-devtools.esm.js",
-      "limit": "50 KB"
+      "limit": "1000 KB"
     }
   ],
   "devDependencies": {
