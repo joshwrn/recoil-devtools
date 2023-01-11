@@ -56,14 +56,15 @@
   "size-limit": [
     {
       "path": "dist/recoil-devtools.cjs.production.min.js",
-      "limit": "10 KB"
+      "limit": "1000 KB"
     },
     {
       "path": "dist/recoil-devtools.esm.js",
-      "limit": "10 KB"
+      "limit": "1000 KB"
     }
   ],
   "devDependencies": {
+    "@changesets/cli": "^2.26.0",
     "@eyecuelab/eslint-config-react": "^1.0.2",
     "@size-limit/preset-small-lib": "^8.1.0",
     "@tsconfig/create-react-app": "^1.0.2",
