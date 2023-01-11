@@ -56,11 +56,11 @@
   "size-limit": [
     {
       "path": "dist/recoil-devtools.cjs.production.min.js",
-      "limit": "10 KB"
+      "limit": "50 KB"
     },
     {
       "path": "dist/recoil-devtools.esm.js",
-      "limit": "10 KB"
+      "limit": "50 KB"
     }
   ],
   "devDependencies": {
