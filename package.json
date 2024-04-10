@@ -1,13 +1,13 @@
 {
   "name": "recoil-state-inspector",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "license": "MIT",
   "authors": [
     "joshwrn",
     "jeremybanka"
   ],
   "main": "dist/index.js",
-  "module": "dist/recoil-devtools.esm.js",
+  "module": "dist/recoil-state-inspector.esm.js",
   "typings": "dist/index.d.ts",
   "files": [
     "dist"
@@ -55,12 +55,12 @@
   },
   "size-limit": [
     {
-      "path": "dist/recoil-devtools.cjs.production.min.js",
-      "limit": "10 KB"
+      "path": "dist/recoil-state-inspector.cjs.production.min.js",
+      "limit": "50 KB"
     },
     {
-      "path": "dist/recoil-devtools.esm.js",
-      "limit": "10 KB"
+      "path": "dist/recoil-state-inspector.esm.js",
+      "limit": "50 KB"
     }
   ],
   "devDependencies": {
