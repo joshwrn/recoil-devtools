@@ -43,12 +43,14 @@ const RecursiveTree: FC<{ contents: unknown; branchName: string }> = ({
 
     // handle object
     if (typeof branch === `object`) {
-      const result = Object.keys(branch).map(
-        (key): { key: number | string | symbol; branch: unknown } => ({
+      const result = Object.keys(branch)
+        .sort((a, b) => {
+          return a > b ? 1 : -1
+        })
+        .map((key): { key: number | string | symbol; branch: unknown } => ({
           key: key,
           branch: (branch as object)[key as keyof typeof branch],
-        })
-      )
+        }))
 
       // handle object with nested objects
       return (

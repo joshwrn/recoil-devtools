@@ -1,4 +1,5 @@
 import type { FC } from "react"
+import React from "react"
 
 import { BiDotsVerticalRounded as DotsIcon } from "react-icons/bi"
 import { GrSettingsOption as SettingsIcon } from "react-icons/gr"

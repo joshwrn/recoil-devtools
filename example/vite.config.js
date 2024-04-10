@@ -8,6 +8,7 @@ export default ({ mode }) => {
   return defineConfig({
     plugins: [
       ReactPlugin({
+        // change this depending on whether you're importing from dist or src
         injectReact: process.env.VITE_NODE_ENV === `production` ? true : false,
       }),
     ],

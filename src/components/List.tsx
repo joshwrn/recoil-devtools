@@ -60,6 +60,9 @@ const List: FC = () => {
             .split(` `)
             .some((phrase) => node.item.key.toLowerCase().includes(phrase))
         )
+        .sort((a, b) => {
+          return a.item.key > b.item.key ? 1 : -1
+        })
         .map((node) => {
           return (
             <Fragment key={`list-` + node.item.key + node.type}>
